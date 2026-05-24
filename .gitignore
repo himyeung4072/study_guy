@@ -12,6 +12,14 @@ study_source/
 .tmp.driveupload/
 *.url
 
+# Kiro / VS Code 設定（本機專用）
+.kiro/
+.vscode/
+
+# 開發日誌與 TODO（本機追蹤用）
+docs/log/
+docs/TODO.md
+
 # OS / Editor
 .DS_Store
 Thumbs.db
