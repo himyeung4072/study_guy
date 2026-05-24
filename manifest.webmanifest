@@ -1,0 +1,20 @@
+{
+  "name": "Study Guy 溫習小幫手",
+  "short_name": "Study Guy",
+  "description": "本地溫習與模擬考試系統，適合小二至小六學生使用。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f5f8fc",
+  "theme_color": "#4a90e2",
+  "lang": "zh-Hant-HK",
+  "icons": [
+    {
+      "src": "assets/icon-192.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ]
+}

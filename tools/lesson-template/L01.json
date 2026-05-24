@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "2.0",
+  "subjectId": "REPLACE-WITH-SUBJECT-ID",
+  "lessonId": "L01",
+  "lessonName": "第1課 範例課名",
+  "lessonOrder": 1,
+  "notes": {
+    "summary": "第一段：一句話說明本課主題（30 秒可記）。\n第二段：三四句分點介紹本課結構。",
+    "keyPoints": [
+      "重點 1（仍須填寫，作為不支援 sections 時的 fallback）",
+      "重點 2",
+      "重點 3"
+    ],
+    "sections": [
+      {
+        "icon": "🔤",
+        "title": "第一個主題區塊標題",
+        "points": ["重點 1", "重點 2", "重點 3"]
+      },
+      {
+        "icon": "📖",
+        "title": "第二個主題區塊標題",
+        "points": ["重點 1", "重點 2"]
+      }
+    ],
+    "highlights": [
+      {
+        "title": "考試必考重點（例如：三大原因）",
+        "points": ["原因一", "原因二", "原因三"]
+      }
+    ],
+    "keywords": [
+      { "term": "詞語 1", "definition": "詞語 1 的定義（用學生能理解的語言）" }
+    ],
+    "examples": ["例子 1（可選）"]
+  },
+  "questions": [
+    {
+      "id": "L01-Q01",
+      "type": "single",
+      "question": "（正向事實題）請填寫題目文字？",
+      "options": ["選項 A", "選項 B", "選項 C", "選項 D"],
+      "answer": [1],
+      "explanation": "答案是選項 B，因為……記法：……",
+      "source": "第1課 P.x",
+      "difficulty": "easy",
+      "tags": ["主題標籤"]
+    },
+    {
+      "id": "L01-Q02",
+      "type": "single",
+      "question": "下列哪一項**不是**……？（反向題，用粗體標示「不」）",
+      "options": ["選項 A", "選項 B", "選項 C", "選項 D"],
+      "answer": [2],
+      "explanation": "答案是選項 C，因為……記法：……",
+      "source": "第1課 P.x",
+      "difficulty": "medium",
+      "tags": ["主題標籤"]
+    },
+    {
+      "id": "L01-Q03",
+      "type": "multiple",
+      "question": "下列哪些是……？（多選題）",
+      "options": ["選項 A", "選項 B", "選項 C", "選項 D"],
+      "answer": [0, 2],
+      "explanation": "答案是 A 與 C，因為……記法：……",
+      "source": "第1課 P.x",
+      "difficulty": "medium",
+      "tags": ["主題標籤"]
+    }
+  ]
+}
