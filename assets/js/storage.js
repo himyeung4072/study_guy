@@ -21,10 +21,7 @@
     terms: ['上學期', '下學期'],
     subjects: [
       { code: 'humanities', name: '人文' },
-      { code: 'science', name: '科學' },
-      { code: 'chi', name: '中文' },
-      { code: 'eng', name: '英文' },
-      { code: 'math', name: '數學' }
+      { code: 'science', name: '科學' }
     ],
     chapters: [
       '第12課', '第13課', '第14課', '第15課',
