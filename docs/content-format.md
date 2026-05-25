@@ -61,6 +61,7 @@ subjects/
 | `highlights` | object[] | ✗ | 加框「重點摘要」小卡（例如「轉口港三大原因」） |
 | `keywords` | array | ✗ | 關鍵詞與定義 |
 | `examples` | string[] | ✗ | 例子或補充說明 |
+| `originalText` | string | ✗ | 課文原文（markdown 格式），供溫習頁「原文」tab 顯示 |
 
 #### `sections[]` 物件
 
@@ -130,7 +131,8 @@ subjects/
     "keywords": [
       { "term": "開埠", "definition": "開放港口讓外國商船進來進行貿易。" }
     ],
-    "examples": ["西貢鹽田梓四面環海，居民利用海水曬鹽。"]
+    "examples": ["西貢鹽田梓四面環海，居民利用海水曬鹽。"],
+    "originalText": "### 第12課：香港故事之旅\n\n#### 一、香港地名的起源與傳說\n1. **地名傳說名稱與內容**\n..."
   },
   "questions": [
     {

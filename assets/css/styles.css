@@ -93,6 +93,14 @@ button {
   background: rgba(255, 255, 255, 0.35);
 }
 
+.app-nav .font-size-btn {
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  font-weight: 700;
+  font-size: 14px;
+  padding: 6px 12px;
+}
+
 .app-main {
   max-width: 960px;
   margin: 0 auto;
@@ -278,6 +286,59 @@ input[type="text"]:focus, select:focus {
   border-radius: 6px;
 }
 .kw-item b { color: var(--c-primary-dark); }
+
+/* 溫習頁：重點/原文切換 tab */
+.view-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--c-border);
+}
+.tab-btn {
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--c-text-soft);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  font-family: inherit;
+  transition: color 0.15s, border-color 0.15s;
+}
+.tab-btn:hover { color: var(--c-primary); }
+.tab-btn.active {
+  color: var(--c-primary);
+  border-bottom-color: var(--c-primary);
+}
+
+/* 摘要分部列表 */
+.summary-parts {
+  margin: 8px 0 0;
+  padding-left: 24px;
+}
+.summary-parts li {
+  margin: 6px 0;
+  line-height: 1.6;
+}
+
+/* 原文顯示區 */
+.original-text {
+  line-height: 1.75;
+  font-size: var(--font-base);
+}
+.original-text h2 { font-size: 20px; color: var(--c-primary-dark); margin: 20px 0 8px; }
+.original-text h3 { font-size: 18px; color: var(--c-primary-dark); margin: 16px 0 6px; }
+.original-text h4 { font-size: 16px; color: var(--c-text); margin: 12px 0 4px; }
+.original-text ul { padding-left: 22px; margin: 4px 0; }
+.original-text li { margin: 4px 0; }
+.original-text blockquote {
+  border-left: 3px solid var(--c-accent);
+  padding: 6px 12px;
+  margin: 8px 0;
+  background: #fff8e8;
+  border-radius: 4px;
+}
 
 
 /* ===== 管理頁：拖放區 ===== */

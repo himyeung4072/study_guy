@@ -267,44 +267,16 @@
     var tax = SG.Storage.getTaxonomy();
     container.innerHTML = '';
 
-    // 年級（單選）
+    // 年級（單選，不可新增／刪除）
     container.appendChild(makeTagGroup('年級', tax.grades, _selectedGrade, false,
       function (val) { _selectedGrade = val; refreshTagUI(container, targetDiv); },
-      function () {
-        SG.modal.prompt('新增年級（例：中一）：').then(function (val) {
-          if (!val) return;
-          try { SG.Storage.addTaxonomyItem('grades', val.trim()); refreshTagUI(container, targetDiv); }
-          catch (e) { SG.toast(e.message, 'error'); }
-        });
-      },
-      function (val) {
-        SG.modal.confirm('確定移除標籤「' + val + '」？').then(function (ok) {
-          if (!ok) return;
-          SG.Storage.removeTaxonomyItem('grades', val);
-          if (_selectedGrade === val) _selectedGrade = '';
-          refreshTagUI(container, targetDiv);
-        });
-      }
+      null, null
     ));
 
-    // 學期（單選）
+    // 學期（單選，不可新增／刪除）
     container.appendChild(makeTagGroup('學期', tax.terms, _selectedTerm, false,
       function (val) { _selectedTerm = val; refreshTagUI(container, targetDiv); },
-      function () {
-        SG.modal.prompt('新增學期（例：暑假班）：').then(function (val) {
-          if (!val) return;
-          try { SG.Storage.addTaxonomyItem('terms', val.trim()); refreshTagUI(container, targetDiv); }
-          catch (e) { SG.toast(e.message, 'error'); }
-        });
-      },
-      function (val) {
-        SG.modal.confirm('確定移除標籤「' + val + '」？').then(function (ok) {
-          if (!ok) return;
-          SG.Storage.removeTaxonomyItem('terms', val);
-          if (_selectedTerm === val) _selectedTerm = '';
-          refreshTagUI(container, targetDiv);
-        });
-      }
+      null, null
     ));
 
     // 科目（單選，顯示 name）
@@ -377,6 +349,7 @@
 
   // 建立一個標籤群組
   // items: string[]，selected: string（單選）或 string[]（多選），multi: boolean
+  // onAdd / onRemove 傳 null 時不顯示對應按鈕
   function makeTagGroup(label, items, selected, multi, onSelect, onAdd, onRemove) {
     var wrap = document.createElement('div');
     wrap.className = 'tag-group';
@@ -393,12 +366,14 @@
       var btn = document.createElement('button');
       btn.className = 'tag-btn' + (isActive ? ' active' : '');
       btn.type = 'button';
-      // 刪除 ×（只在非 active 時顯示，避免誤刪）
-      btn.innerHTML = SG.esc(item) +
-        '<span class="tag-remove" data-item="' + SG.esc(item) + '" title="移除此標籤">×</span>';
+      if (onRemove) {
+        btn.innerHTML = SG.esc(item) +
+          '<span class="tag-remove" data-item="' + SG.esc(item) + '" title="移除此標籤">×</span>';
+      } else {
+        btn.textContent = item;
+      }
       btn.addEventListener('click', function (e) {
-        if (e.target.classList.contains('tag-remove')) {
-          // 由 onRemove 自行處理 confirm（為了支援 async modal）
+        if (onRemove && e.target.classList.contains('tag-remove')) {
           onRemove(item);
           return;
         }
@@ -406,12 +381,14 @@
       });
       row.appendChild(btn);
     });
-    var addBtn = document.createElement('button');
-    addBtn.className = 'tag-add';
-    addBtn.type = 'button';
-    addBtn.textContent = '+ 新增';
-    addBtn.addEventListener('click', onAdd);
-    row.appendChild(addBtn);
+    if (onAdd) {
+      var addBtn = document.createElement('button');
+      addBtn.className = 'tag-add';
+      addBtn.type = 'button';
+      addBtn.textContent = '+ 新增';
+      addBtn.addEventListener('click', onAdd);
+      row.appendChild(addBtn);
+    }
     wrap.appendChild(row);
     return wrap;
   }

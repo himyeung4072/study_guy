@@ -48,6 +48,53 @@
       });
       nav.appendChild(btn);
     });
+    // 字體大小按鈕
+    var fontBtn = document.createElement('button');
+    fontBtn.className = 'font-size-btn';
+    fontBtn.textContent = '字 ' + getFontSizeLabel();
+    fontBtn.title = '切換字體大小';
+    fontBtn.addEventListener('click', function () {
+      cycleFontSize();
+      fontBtn.textContent = '字 ' + getFontSizeLabel();
+    });
+    nav.appendChild(fontBtn);
+  }
+
+  // 字體大小管理
+  var FONT_SIZES = [
+    { key: 'small', label: '小', base: '16px' },
+    { key: 'medium', label: '中', base: '18px' },
+    { key: 'large', label: '大', base: '22px' }
+  ];
+
+  function getCurrentFontSize() {
+    var settings = SG.Storage.getSettings();
+    return settings.fontSize || 'medium';
+  }
+
+  function getFontSizeLabel() {
+    var cur = getCurrentFontSize();
+    var item = FONT_SIZES.find(function (f) { return f.key === cur; });
+    return item ? item.label : '中';
+  }
+
+  function cycleFontSize() {
+    var cur = getCurrentFontSize();
+    var idx = FONT_SIZES.findIndex(function (f) { return f.key === cur; });
+    var next = FONT_SIZES[(idx + 1) % FONT_SIZES.length];
+    SG.Storage.updateSettings({ fontSize: next.key });
+    applyFontSize(next.key);
+  }
+
+  function applyFontSize(key) {
+    var item = FONT_SIZES.find(function (f) { return f.key === key; });
+    if (!item) return;
+    document.documentElement.style.setProperty('--font-base', item.base);
+  }
+
+  // 啟動時套用已儲存的字體大小
+  function initFontSize() {
+    applyFontSize(getCurrentFontSize());
   }
 
   // 渲染目前 view
@@ -173,6 +220,7 @@
   // 啟動
   window.addEventListener('hashchange', renderCurrent);
   window.addEventListener('DOMContentLoaded', function () {
+    initFontSize();
     if (!location.hash) location.hash = '#/home';
     else renderCurrent();
   });

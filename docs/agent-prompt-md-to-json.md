@@ -130,6 +130,7 @@
 | `highlights`（可選） | 加框「考試一定考」摘要 `{ title, points }`，points 顯示為有序列表。 |
 | `keywords` | 課文專有名詞 + 一句定義（學生能懂）。 |
 | `examples`（可選） | 課文提及的例子或補充說明。 |
+| `originalText` | 從 source markdown 擷取該課的完整原文（從 `### 第XX課` 到下一個 `---` 或檔案結尾），保留 markdown 格式。用於溫習頁「原文」tab 顯示。**必填**。 |
 
 ### 步驟 2：撰寫試題 `questions`
 
@@ -159,6 +160,7 @@
 
 - [ ] `schemaVersion` 為 `"2.0"`
 - [ ] 每課皆有 `subjectId`、`lessonId`、`lessonName`、`lessonOrder`
+- [ ] 每課 `notes.originalText` 已填入對應課文的完整 markdown 原文
 - [ ] 同科目內所有 lesson 的 `subjectId` 相同
 - [ ] 每題 `id` 在同科內唯一
 - [ ] 每題 `options.length >= 3`（建議 4）
@@ -207,7 +209,8 @@
     "keywords": [
       { "term": "開埠", "definition": "開放港口讓外國商船進來進行貿易。" }
     ],
-    "examples": ["例子……"]
+    "examples": ["例子……"],
+    "originalText": "### 第12課：香港故事之旅\n\n#### 一、香港地名的起源與傳說\n..."
   },
   "questions": [
     {
