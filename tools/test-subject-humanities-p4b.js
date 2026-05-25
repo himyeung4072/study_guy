@@ -1,4 +1,4 @@
-/* 驗證 subjects/people-p4b/ 通過 ContentLoader schema、抽題正常（schema 2.0） */
+/* 驗證 subjects/humanities-p4b/ 通過 ContentLoader schema、抽題正常（schema 2.0） */
 'use strict';
 const fs = require('fs');
 const vm = require('vm');
@@ -22,27 +22,27 @@ vm.createContext(sandbox);
 
 const SG = sandbox.window.StudyGuy;
 
-// 讀取 subjects/people-p4b/ 內所有 lesson JSON
+// 讀取 subjects/humanities-p4b/ 內所有 lesson JSON
 const lessons = [];
-fs.readdirSync('subjects/people-p4b').forEach(f => {
+fs.readdirSync('subjects/humanities-p4b').forEach(f => {
   if (!f.endsWith('.json')) return;
   if (f === 'subject.json') return;
-  const lesson = JSON.parse(fs.readFileSync('subjects/people-p4b/' + f, 'utf8'));
-  SG.ContentLoader.validateLesson(lesson, 'people-p4b', f);
+  const lesson = JSON.parse(fs.readFileSync('subjects/humanities-p4b/' + f, 'utf8'));
+  SG.ContentLoader.validateLesson(lesson, 'humanities-p4b', f);
   lessons.push(lesson);
 });
 
 console.log('✓ schema OK，課數:', lessons.length);
 
 const upsert = SG.Storage.upsertSubject({
-  subjectId: 'people-p4b',
-  subjectName: '常識（人民）',
+  subjectId: 'humanities-p4b',
+  subjectName: '人文科',
   grade: '小四下',
   _newLessons: lessons
 });
 console.log('✓ upsert added:', upsert.stats.added, 'updated:', upsert.stats.updated);
 
-const s = SG.Storage.getSubject('people-p4b');
+const s = SG.Storage.getSubject('humanities-p4b');
 const all = SG.Storage.flattenLessons(s);
 console.log('✓ flatten 後課數:', all.length, '總題數:', all.reduce((n, l) => n + l.questions.length, 0));
 

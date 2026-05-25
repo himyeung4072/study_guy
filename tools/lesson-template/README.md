@@ -3,7 +3,7 @@
 本資料夾示範 Study Guy 一個課別檔的最小結構（schema 2.0），**僅供參考／複製用**。
 
 > 詳細格式請參考 `docs/content-format.md`。
-> 由 PDF 自動產出 JSON 時請使用 `docs/agent-prompt-pdf-to-json.md` 內的提示詞。
+> 由 PDF 自動產出 JSON 時請使用 `docs/agent-prompt-pdf-to-md.md`（階段 A）與 `docs/agent-prompt-md-to-json.md`（階段 B）內的提示詞。
 
 ## 製作新課別步驟
 

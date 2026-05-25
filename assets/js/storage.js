@@ -20,7 +20,7 @@
     grades: ['小一', '小二', '小三', '小四', '小五', '小六'],
     terms: ['上學期', '下學期'],
     subjects: [
-      { code: 'people', name: '常識（人民）' },
+      { code: 'humanities', name: '人文' },
       { code: 'science', name: '科學' },
       { code: 'chi', name: '中文' },
       { code: 'eng', name: '英文' },
@@ -247,7 +247,7 @@
   }
 
   // 由標籤算出 subjectId：<subjectCode>-p<gradeNum><termLetter>
-  // 例：科目 people、小四、下學期 → people-p4b
+  // 例：科目 humanities、小四、下學期 → humanities-p4b
   function buildSubjectId(subjectCode, grade, term) {
     var gradeMap = { '小一': '1', '小二': '2', '小三': '3', '小四': '4', '小五': '5', '小六': '6' };
     var termMap = { '上學期': 'a', '下學期': 'b' };

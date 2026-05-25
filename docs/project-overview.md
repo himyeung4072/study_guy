@@ -74,7 +74,7 @@
 
 ### 階段 A：PDF（掃描檔）→ Markdown（人類審閱）
 
-由使用者（家長／老師）在外部使用任何具視覺能力的 AI Agent（ChatGPT／Claude／Gemini 等），以 `docs/agent-prompt-pdf-to-json.md` 內 **第一部分（OCR + 結構化）** 為提示詞，將 `study_source/<學生>/<科目>/*.pdf` OCR 並整理為 markdown／txt 純文字檔，產出位置：
+由使用者（家長／老師）在外部使用任何具視覺能力的 AI Agent（ChatGPT／Claude／Gemini 等），以 `docs/agent-prompt-pdf-to-md.md` 為提示詞，將 `study_source/<學生>/<科目>/*.pdf` OCR 並整理為 markdown 純文字檔，產出位置：
 
 ```
 study_source/<學生>/<科目>/<課文主題>_<單元>_課程內容.md
@@ -89,7 +89,7 @@ study_source/hayson/people/香港今昔_單元六_課程內容.md
 
 ### 階段 B：Markdown → JSON（Kiro 自動轉換）
 
-使用者把整理好的 markdown 提交給 Kiro，Kiro 依照 `docs/agent-prompt-pdf-to-json.md` 內 **第二部分（質素規則）**，把 markdown 轉為符合 schema 2.0 的 lesson JSON：
+使用者把整理好的 markdown 提交給 Kiro，Kiro 依照 `docs/agent-prompt-md-to-json.md` 內的質素規則，把 markdown 轉為符合 schema 2.0 的 lesson JSON：
 
 ```
 subjects/<subjectId>/

@@ -297,6 +297,6 @@ SG.Storage.addTaxonomyItem('subjects', { code: 'music', name: '音樂' });
 assert(SG.Storage.getTaxonomy().subjects.some(function(s){ return s.code === 'music'; }), 'taxonomy: 新增科目');
 
 // 15. buildSubjectId
-assert(SG.Storage.buildSubjectId('people', '小四', '下學期') === 'people-p4b', 'buildSubjectId: people-p4b');
+assert(SG.Storage.buildSubjectId('humanities', '小四', '下學期') === 'humanities-p4b', 'buildSubjectId: humanities-p4b');
 assert(SG.Storage.buildSubjectId('science', '小三', '上學期') === 'science-p3a', 'buildSubjectId: science-p3a');
-assert(SG.Storage.buildSubjectId('people', '', '下學期') === null, 'buildSubjectId: 缺年級回 null');
+assert(SG.Storage.buildSubjectId('humanities', '', '下學期') === null, 'buildSubjectId: 缺年級回 null');

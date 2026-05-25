@@ -57,13 +57,17 @@ subjects/
 
 ## 由 PDF 產生 JSON
 
-如要把課文 PDF 轉為 lesson JSON，請把 [`docs/agent-prompt-pdf-to-json.md`](docs/agent-prompt-pdf-to-json.md) 整份貼給有視覺能力的 AI（ChatGPT、Claude、Gemini），跟住流程做即可。
+分兩階段：
+
+1. **PDF → Markdown**：把 [`docs/agent-prompt-pdf-to-md.md`](docs/agent-prompt-pdf-to-md.md) 整份貼給有視覺能力的 AI（ChatGPT、Claude、Gemini），附上掃描 PDF，產出結構化 markdown。
+2. **Markdown → JSON**：把 [`docs/agent-prompt-md-to-json.md`](docs/agent-prompt-md-to-json.md) 整份貼給 AI（或交給 Kiro），附上校對好的 markdown，產出 lesson JSON。
 
 ## 文檔
 
 - [`docs/project-overview.md`](docs/project-overview.md)：專案目的與功能說明
-- [`docs/content-format.md`](docs/content-format.md)：JSON 格式規範
-- [`docs/agent-prompt-pdf-to-json.md`](docs/agent-prompt-pdf-to-json.md)：給 AI 的 PDF→JSON 提示詞
+- [`docs/content-format.md`](docs/content-format.md)：JSON 格式規範（schema 2.0）
+- [`docs/agent-prompt-pdf-to-md.md`](docs/agent-prompt-pdf-to-md.md)：階段 A — PDF→Markdown 提示詞
+- [`docs/agent-prompt-md-to-json.md`](docs/agent-prompt-md-to-json.md)：階段 B — Markdown→JSON 提示詞
 - [`docs/TODO.md`](docs/TODO.md)：開發進度
 
 ## 隱私
