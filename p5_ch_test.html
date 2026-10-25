@@ -3,6 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- iOS (iPhone / iPad) 全螢幕 Web App 設定 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="中文填充溫習">
+
+<!-- Android / Chrome 全螢幕設定 -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#fcfaf5">
+
+<!-- 內嵌單一檔案 App Icon (免外置圖片，自動生成書本圖示) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%231d4ed8'/><text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' font-size='52'>📖</text></svg>">
+
+<!-- 內嵌 Web App Manifest (令 Android 支援全螢幕安裝) -->
+<link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;小五中文供詞填充溫習&quot;,&quot;short_name&quot;:&quot;中文填充&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23fcfaf5&quot;,&quot;theme_color&quot;:&quot;%231d4ed8&quot;}">
 <title>P5 中文科考前溫習：供詞填充特訓系統（教師審訂版）</title>
 <style>
   :root {
