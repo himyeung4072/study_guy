@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>小五中文科修辭練習</title>
+
+<!-- iOS / iPad 主畫面全螢幕 Web App 設定 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="小五修辭練習">
+
+<!-- Android / Chrome 全螢幕設定 -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#fcfaf5">
+
+<!-- 內嵌 SVG App Icon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%231d4ed8'/><text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' font-size='50'>📘</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%231d4ed8'/><text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' font-size='50'>📘</text></svg>">
+
+<!-- 內嵌 Web App Manifest -->
+<link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;小五中文科修辭練習&quot;,&quot;short_name&quot;:&quot;小五修辭&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23fcfaf5&quot;,&quot;theme_color&quot;:&quot;%231d4ed8&quot;}">
+
+<style>
+  :root {
+    --paper-bg: #fcfaf5;
+    --paper-line: #dcd7cc;
+    --ink: #1a1e24;
+    --ink-muted: #555e68;
+    --border-strong: #222831;
+    --accent-blue: #1d4ed8;
+    --accent-hover: #1e40af;
+    --correct-green: #15803d;
+    --correct-bg: #dcfce7;
+    --wrong-red: #b91c1c;
+    --wrong-bg: #fee2e2;
+    --selected-bg: #dbeafe;
+    --selected-border: #2563eb;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: "PingFang HK", "Microsoft JhengHei", "Heiti TC", "Kaiti TC", serif;
+    background-color: #e8e5df;
+    color: var(--ink);
+    line-height: 1.65;
+    padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    touch-action: manipulation;
+  }
+
+  .app-shell {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* 頂部導航操作列 */
+  .top-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    background: #ffffff;
+    padding: 12px 18px;
+    border-radius: 8px;
+    border: 2px solid var(--border-strong);
+    margin-bottom: 16px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.06);
+  }
+
+  .brand-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .teacher-badge {
+    font-size: 0.78rem;
+    background: #eff6ff;
+    color: var(--accent-blue);
+    border: 1px solid #93c5fd;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-weight: 700;
+  }
+
+  .nav-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.92rem;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: 2px solid var(--border-strong);
+    background: #fff;
+    color: var(--ink);
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    touch-action: manipulation;
+  }
+
+  .btn:hover:not(:disabled) {
+    background: #f1f5f9;
+    transform: translateY(-1px);
+  }
+
+  .btn-primary {
+    background: var(--accent-blue);
+    color: #fff;
+    border-color: var(--accent-blue);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: var(--accent-hover);
+  }
+
+  .btn-danger {
+    background: var(--wrong-bg);
+    color: var(--wrong-red);
+    border-color: var(--wrong-red);
+  }
+
+  /* 模擬試卷卡片 */
+  .exam-paper {
+    background: var(--paper-bg);
+    border: 2px solid var(--border-strong);
+    padding: 28px 32px;
+    border-radius: 4px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+    position: relative;
+  }
+
+  .school-header {
+    text-align: center;
+    margin-bottom: 14px;
+    border-bottom: 2px solid var(--border-strong);
+    padding-bottom: 12px;
+  }
+
+  .quiz-title {
+    font-size: 1.55rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+  }
+
+  .exam-section-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin: 14px 0 16px 0;
+    line-height: 1.6;
+    background: rgba(0,0,0,0.03);
+    padding: 8px 12px;
+    border-left: 4px solid var(--border-strong);
+  }
+
+  /* 分組頁籤 */
+  .group-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1.5px dashed var(--paper-line);
+  }
+
+  .group-tab {
+    padding: 6px 12px;
+    border: 1.5px solid var(--border-strong);
+    background: #fff;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .group-tab.active {
+    background: var(--ink);
+    color: #fff;
+  }
+
+  .group-tab.done {
+    border-color: var(--correct-green);
+    background: var(--correct-bg);
+    color: var(--correct-green);
+  }
+
+  .group-tab.done.active {
+    background: var(--correct-green);
+    color: #fff;
+  }
+
+  /* 仿試卷黑框修辭供詞表 (4欄 x 2行) - Sticky 置頂 */
+  .bank-sticky-wrapper {
+    position: sticky;
+    top: 8px;
+    z-index: 20;
+    background: var(--paper-bg);
+    padding: 4px 0 10px 0;
+  }
+
+  .bank-header-label {
+    font-size: 0.95rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .bank-box {
+    border: 2.5px solid var(--border-strong);
+    background: #ffffff;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .bank-chip {
+    padding: 8px 6px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    text-align: center;
+    border: 1.5px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.12s ease;
+    background: #f8fafc;
+    touch-action: manipulation;
+  }
+
+  .bank-chip:hover:not(.used):not(.locked) {
+    border-color: var(--accent-blue);
+    background: #eff6ff;
+  }
+
+  .bank-chip.selected {
+    background: var(--selected-bg);
+    border-color: var(--selected-border);
+    color: var(--accent-blue);
+    box-shadow: 0 0 0 2px rgba(37,99,235,0.25);
+    transform: scale(1.02);
+  }
+
+  .bank-chip.used {
+    color: #94a3b8;
+    text-decoration: line-through;
+    background: #f1f5f9;
+    font-weight: 600;
+    cursor: default;
+  }
+
+  /* 題目行佈局 */
+  .questions-container {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .question-item {
+    padding: 12px 14px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid #e2e8f0;
+  }
+
+  .q-main-row {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.8;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .q-text {
+    flex: 1;
+    min-width: 260px;
+  }
+
+  /* 仿試卷末端作答橫線 */
+  .answer-slot-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .answer-line-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 105px;
+    height: 36px;
+    padding: 0 10px;
+    border-bottom: 2px solid var(--border-strong);
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--accent-blue);
+    cursor: pointer;
+    background: rgba(255,255,255,0.9);
+    transition: all 0.15s ease;
+    touch-action: manipulation;
+  }
+
+  .answer-line-btn:hover:not(.locked) {
+    background: #eff6ff;
+  }
+
+  .answer-line-btn.active-target {
+    background: var(--selected-bg);
+    border-bottom: 3px solid var(--selected-border);
+  }
+
+  .answer-line-btn.filled {
+    color: #0f172a;
+    background: #f8fafc;
+  }
+
+  .answer-line-btn.is-correct {
+    color: var(--correct-green);
+    border-bottom-color: var(--correct-green);
+    background: var(--correct-bg);
+  }
+
+  .answer-line-btn.is-wrong {
+    color: var(--wrong-red);
+    border-bottom-color: var(--wrong-red);
+    background: var(--wrong-bg);
+    text-decoration: line-through;
+  }
+
+  .correction-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--correct-green);
+    background: var(--correct-bg);
+    border: 1px solid var(--correct-green);
+    border-radius: 4px;
+  }
+
+  .teacher-explanation {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #166534;
+  }
+
+  .teacher-explanation.wrong-box {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: #991b1b;
+  }
+
+  /* 底部小結算卡 */
+  .footer-actions {
+    margin-top: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .group-summary-card {
+    margin-top: 22px;
+    padding: 20px;
+    border: 2px solid var(--border-strong);
+    background: #ffffff;
+    border-radius: 8px;
+  }
+
+  .summary-title {
+    font-size: 1.25rem;
+    font-weight: 900;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* 錯題溫習介面 */
+  .mistake-item {
+    background: #fff;
+    border: 1.5px solid #cbd5e1;
+    border-left: 5px solid var(--wrong-red);
+    padding: 14px 16px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+  }
+
+  .mistake-sentence {
+    font-size: 1.12rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .mistake-tag {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--ink-muted);
+  }
+
+  @media (max-width: 680px) {
+    .exam-paper {
+      padding: 16px 12px;
+    }
+    .bank-box {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+    }
+    .bank-chip {
+      font-size: 0.95rem;
+      padding: 6px 4px;
+    }
+    .q-main-row {
+      flex-direction: column;
+      gap: 8px;
+    }
+    .answer-slot-box {
+      align-self: flex-end;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <!-- 頂部導航列 -->
+  <header class="top-nav">
+    <div class="brand-title">
+      <span>📖 小五中文科修辭練習</span>
+      <span class="teacher-badge">資深教師審訂版 (60題)</span>
+    </div>
+    <div class="nav-actions">
+      <button class="btn" onclick="goHome()">🏠 練習目錄</button>
+      <button class="btn btn-danger" onclick="openMistakeCenter()" id="navMistakeBtn">
+        📕 錯題溫習 (<span id="mistakeBadge">0</span>)
+      </button>
+    </div>
+  </header>
+
+  <!-- 主視圖容器 -->
+  <main id="mainView"></main>
+</div>
+
+<script>
+/**
+ * 小五 12 種指定修辭手法（每個修辭各 5 條題目，共 60 條，分 10 組，每組 6 條）
+ * 教師審訂版：已徹底消除同組內「排比＋暗喻」、「反問＋明喻」等雙重修辭撞車現象，
+ * 並修正對偶句對仗及借喻純粹度。
+ */
+const P5_DATA_GROUPS = [
+  // 第一組：設問、反問、明喻、對比、誇張、擬人（干擾項：排比、暗喻）
+  {
+    groupTitle: "第一組",
+    bank: ["設問", "反問", "明喻", "對比", "誇張", "擬人", "排比", "暗喻"],
+    questions: [
+      {
+        id: "P5_G1_Q1",
+        sentence: "幸福的秘訣是甚麼？就是懂得珍惜眼前所擁有的一切。",
+        answer: "設問",
+        explanation: "自問自答以啟發讀者思考，屬於【設問】。"
+      },
+      {
+        id: "P5_G1_Q2",
+        sentence: "面對大自然發出的嚴正警告，人類難道還能繼續盲目破壞環境嗎？",
+        answer: "反問",
+        explanation: "無疑而問，答案寓於問句中（不能繼續破壞環境），語氣強烈，屬於【反問】。"
+      },
+      {
+        id: "P5_G1_Q3",
+        sentence: "遠處的瀑布從懸崖飛瀉而下，宛如一匹巨大的白色綢緞懸掛在青山之間。",
+        answer: "明喻",
+        explanation: "比喻詞為「宛如」，將「瀑布」比作「白色綢緞」，本體與喻體皆出現，屬於【明喻】。"
+      },
+      {
+        id: "P5_G1_Q4",
+        sentence: "虛心使人進步，驕傲使人落後。",
+        answer: "對比",
+        explanation: "將「虛心進步」與「驕傲落後」兩種截然相反的態度與結果並列對照，屬於【對比】。"
+      },
+      {
+        id: "P5_G1_Q5",
+        sentence: "聽完這個驚險萬分的探險故事，大家緊張得連大氣也不敢喘一口，心跳都快要停止了。",
+        answer: "誇張",
+        explanation: "故意把緊張的程度誇大到「心跳快要停止」，屬於【誇張】。"
+      },
+      {
+        id: "P5_G1_Q6",
+        sentence: "岸邊的垂柳隨風輕撫水面，對著清澈的溪水梳理自己碧綠的長髮。",
+        answer: "擬人",
+        explanation: "賦予垂柳「輕撫、梳理長髮」等人的動作，屬於【擬人】。"
+      }
+    ]
+  },
+
+  // 第二組：排比、暗喻、借喻、頂真、反復、對偶（干擾項：設問、對比）
+  {
+    groupTitle: "第二組",
+    bank: ["排比", "暗喻", "借喻", "頂真", "反復", "對偶", "設問", "對比"],
+    questions: [
+      {
+        id: "P5_G2_Q1",
+        sentence: "在求學的道路上，我們需要堅定的信念，需要不懈的努力，更需要謙虛的態度。",
+        answer: "排比",
+        explanation: "由三個「需要……」結構相同、語氣一致的分句排列而成，屬於【排比】。"
+      },
+      {
+        id: "P5_G2_Q2",
+        sentence: "母親溫暖的懷抱是避風的港灣，永遠給予我們無條件的保護與慰藉。",
+        answer: "暗喻",
+        explanation: "喻詞為「是」，直接將「母親的懷抱」比作「避風的港灣」，屬於【暗喻】。"
+      },
+      {
+        id: "P5_G2_Q3",
+        sentence: "只要我們咬緊牙關挺過這場狂風驟雨，前方必定會迎來晴朗的天空。",
+        answer: "借喻",
+        explanation: "不出現本體（困難與順境）及喻詞，直接以喻體「狂風驟雨」代指逆境，屬於【借喻】。"
+      },
+      {
+        id: "P5_G2_Q4",
+        sentence: "大海深處有游魚，游魚身旁有水草，水草叢中有珍珠。",
+        answer: "頂真",
+        explanation: "上一句結尾的詞語（「游魚」、「水草」）直接作為下一句的開頭，環環相扣，屬於【頂真】。"
+      },
+      {
+        id: "P5_G2_Q5",
+        sentence: "衝啊，衝啊！勇敢的消防員冒著濃煙衝進火場救人。",
+        answer: "反復",
+        explanation: "連續重複「衝啊」以加強緊迫與英勇的語氣，屬於【反復】。"
+      },
+      {
+        id: "P5_G2_Q6",
+        sentence: "潮平兩岸闊，風正一帆懸。",
+        answer: "對偶",
+        explanation: "上下句字數相等（五言）、詞性相對、結構工整對稱，屬於【對偶】。"
+      }
+    ]
+  },
+
+  // 第三組：設問、反問、借喻、對比、誇張、頂真（干擾項：擬人、對偶）
+  {
+    groupTitle: "第三組",
+    bank: ["設問", "反問", "借喻", "對比", "誇張", "頂真", "擬人", "對偶"],
+    questions: [
+      {
+        id: "P5_G3_Q1",
+        sentence: "這場球賽我們為甚麼能反敗為勝？靠的就是隊員們團結一致的拼搏精神。",
+        answer: "設問",
+        explanation: "自問自答，明確指出反敗為勝的原因，屬於【設問】。"
+      },
+      {
+        id: "P5_G3_Q2",
+        sentence: "老師日復一日為我們悉心備課，我們怎能不用心學習來回報他們的教導呢？",
+        answer: "反問",
+        explanation: "用疑問句型表達肯定的道理（必須用心學習），屬於【反問】。"
+      },
+      {
+        id: "P5_G3_Q3",
+        sentence: "我們要時刻警惕那些披著羊皮的豺狼，切勿輕信壞人的甜言蜜語。",
+        answer: "借喻",
+        explanation: "直接以喻體「披著羊皮的豺狼」代替偽善的壞人，不出現本體與喻詞，屬於【借喻】。"
+      },
+      {
+        id: "P5_G3_Q4",
+        sentence: "有些人在富裕中貪婪抱怨，有些人卻在貧困中知足常樂。",
+        answer: "對比",
+        explanation: "將兩種截然相反的生活境遇與心態並列對照，屬於【對比】。"
+      },
+      {
+        id: "P5_G3_Q5",
+        sentence: "烈日下跑完五公里後，他口渴得喉嚨快要冒煙，恨不得一口氣喝乾整條河的水。",
+        answer: "誇張",
+        explanation: "「喉嚨冒煙、喝乾整條河」將口渴程度極度誇大，屬於【誇張】。"
+      },
+      {
+        id: "P5_G3_Q6",
+        sentence: "讀書能增長見識，見識能開闊胸襟，胸襟能成就事業。",
+        answer: "頂真",
+        explanation: "前句末尾之「見識」、「胸襟」緊接作為後句之開頭，屬於【頂真】。"
+      }
+    ]
+  },
+
+  // 第四組：擬人、排比、暗喻、反復、對偶、明喻（干擾項：誇張、借喻）
+  {
+    groupTitle: "第四組",
+    bank: ["擬人", "排比", "暗喻", "反復", "對偶", "明喻", "誇張", "借喻"],
+    questions: [
+      {
+        id: "P5_G4_Q1",
+        sentence: "夜幕低垂，調皮的星星眨著眼睛，在夜空中輕聲交談。",
+        answer: "擬人",
+        explanation: "賦予星星「調皮、眨眼睛、交談」等人的神態動作，屬於【擬人】。"
+      },
+      {
+        id: "P5_G4_Q2",
+        sentence: "為了完成這項研究，科學家在實驗室裏觀察，在圖書館裏查閱，在田野間記錄。",
+        answer: "排比",
+        explanation: "三個「在……裏／間……」句式排列整齊，語氣連貫，屬於【排比】。"
+      },
+      {
+        id: "P5_G4_Q3",
+        sentence: "知識是開啟未知世界的金鑰匙，能帶領我們探索宇宙的奧秘。",
+        answer: "暗喻",
+        explanation: "喻詞為「是」，將「知識」直接比作「金鑰匙」，屬於【暗喻】。"
+      },
+      {
+        id: "P5_G4_Q4",
+        sentence: "盼望著，盼望著，漂泊多年的遊子終於踏上了歸家的旅途。",
+        answer: "反復",
+        explanation: "重複使用「盼望著」以強調殷切期盼的情感，屬於【反復】。"
+      },
+      {
+        id: "P5_G4_Q5",
+        sentence: "兩個黃鸝鳴翠柳，一行白鷺上青天。",
+        answer: "對偶",
+        explanation: "杜甫七言絕句，字數相等、詞性對仗工整，屬於【對偶】。"
+      },
+      {
+        id: "P5_G4_Q6",
+        sentence: "秋風吹過，金黃色的銀杏葉紛紛飄落，像一隻隻黃蝴蝶在空中飛舞。",
+        answer: "明喻",
+        explanation: "喻詞為「像」，把銀杏葉比作黃蝴蝶，屬於【明喻】。"
+      }
+    ]
+  },
+
+  // 第五組：設問、明喻、對比、借喻、反復、擬人（干擾項：反問、頂真）
+  {
+    groupTitle: "第五組",
+    bank: ["設問", "明喻", "對比", "借喻", "反復", "擬人", "反問", "頂真"],
+    questions: [
+      {
+        id: "P5_G5_Q1",
+        sentence: "人生道路上最大的敵人是誰？不是別人，正是容易半途而廢的自己。",
+        answer: "設問",
+        explanation: "先提出問題再行作答，屬於【設問】。"
+      },
+      {
+        id: "P5_G5_Q2",
+        sentence: "滿天的繁星閃爍著光芒，正如無數顆鑲嵌在黑絲絨布上的寶石。",
+        answer: "明喻",
+        explanation: "比喻詞為「正如」，把繁星比作寶石，屬於【明喻】。"
+      },
+      {
+        id: "P5_G5_Q3",
+        sentence: "大自然以無私的胸懷滋養萬物，部分人類卻以自私的手段破壞生態。",
+        answer: "對比",
+        explanation: "大自然的「無私滋養」與人類的「自私破壞」構成鮮明對照，屬於【對比】。"
+      },
+      {
+        id: "P5_G5_Q4",
+        sentence: "老師用愛心悉心灌溉，終於讓這些祖國的幼苗茁壯成長。",
+        answer: "借喻",
+        explanation: "直接以喻體「幼苗」代替本體「學生／兒童」，不出現本體與喻詞，屬於【借喻】。"
+      },
+      {
+        id: "P5_G5_Q5",
+        sentence: "歸來吧，歸來吧，故鄉的親人正深情地呼喚著你的名字。",
+        answer: "反復",
+        explanation: "重複「歸來吧」以加強呼喚的深情，屬於【反復】。"
+      },
+      {
+        id: "P5_G5_Q6",
+        sentence: "北風在窗外憤怒地咆哮，拼命拍打著木門，想要闖進溫暖的屋子裏。",
+        answer: "擬人",
+        explanation: "賦予北風「憤怒咆哮、拍打、想闖進」等人的行為，屬於【擬人】。"
+      }
+    ]
+  },
+
+  // 第六組：反問、誇張、排比、暗喻、頂真、對偶（干擾項：明喻、對比）
+  {
+    groupTitle: "第六組",
+    bank: ["反問", "誇張", "排比", "暗喻", "頂真", "對偶", "明喻", "對比"],
+    questions: [
+      {
+        id: "P5_G6_Q1",
+        sentence: "看到受傷的小鳥無助地在地上掙扎，有同情心的人又怎會忍心不救牠呢？",
+        answer: "反問",
+        explanation: "反詰問句，答案在問句中（一定會救牠），屬於【反問】。"
+      },
+      {
+        id: "P5_G6_Q2",
+        sentence: "禮堂裡爆發出一陣雷鳴般的掌聲，響亮得幾乎要把整座屋頂都掀翻了。",
+        answer: "誇張",
+        explanation: "掌聲「幾乎把屋頂掀翻」為超乎客觀事實的放大描寫，屬於【誇張】。"
+      },
+      {
+        id: "P5_G6_Q3",
+        sentence: "春天為大地換上嫩綠的新裝，春天為花園點綴鮮艷的色彩，春天為萬物注入勃勃的生機。",
+        answer: "排比",
+        explanation: "三個「春天為……」結構一致的分句並列，屬於【排比】。"
+      },
+      {
+        id: "P5_G6_Q4",
+        sentence: "童年是一幅五彩繽紛的畫卷，記錄著我們無憂無慮的歡笑。",
+        answer: "暗喻",
+        explanation: "喻詞為「是」，本體為童年，喻體為畫卷，屬於【暗喻】。"
+      },
+      {
+        id: "P5_G6_Q5",
+        sentence: "山間有清泉，清泉匯成溪流，溪流奔向大海。",
+        answer: "頂真",
+        explanation: "「清泉」、「溪流」首尾頂接，屬於【頂真】。"
+      },
+      {
+        id: "P5_G6_Q6",
+        sentence: "山重水複疑無路，柳暗花明又一村。",
+        answer: "對偶",
+        explanation: "陸游名句，「山重水複」對「柳暗花明」，「疑無路」對「又一村」，對仗工整，屬於【對偶】。"
+      }
+    ]
+  },
+
+  // 第七組：設問、反問、明喻、誇張、暗喻、借喻（干擾項：排比、反復）
+  {
+    groupTitle: "第七組",
+    bank: ["設問", "反問", "明喻", "誇張", "暗喻", "借喻", "排比", "反復"],
+    questions: [
+      {
+        id: "P5_G7_Q1",
+        sentence: "甚麼動物被稱為「沙漠之舟」？那就是耐渴又能負重的駱駝。",
+        answer: "設問",
+        explanation: "先設疑問，緊接自行回答，屬於【設問】。"
+      },
+      {
+        id: "P5_G7_Q2",
+        sentence: "沒有平日千百次的刻苦訓練，運動員又怎可能在賽場上奪得金牌呢？",
+        answer: "反問",
+        explanation: "答案在問句之中（不可能奪得金牌），屬於【反問】。"
+      },
+      {
+        id: "P5_G7_Q3",
+        sentence: "雨過天晴，平靜的湖面像一面明亮的鏡子，映照出兩岸翠綠的山峰。",
+        answer: "明喻",
+        explanation: "帶有「像」字喻詞，把湖面比作鏡子，屬於【明喻】。"
+      },
+      {
+        id: "P5_G7_Q4",
+        sentence: "弟弟跌倒後的啼哭聲震耳欲聾，隔著三條街都能聽得清清楚楚。",
+        answer: "誇張",
+        explanation: "誇大哭聲至「隔三條街都聽見」，屬於【誇張】。"
+      },
+      {
+        id: "P5_G7_Q5",
+        sentence: "失敗是成功之母，每一次錯誤都能讓我們汲取寶貴的教訓。",
+        answer: "暗喻",
+        explanation: "以「是」作為比喻詞，把失敗比喻為成功之母，屬於【暗喻】。"
+      },
+      {
+        id: "P5_G7_Q6",
+        sentence: "敵人雖然狡猾，但只要戰士們齊心協力，一定能徹底斬斷伸向家園的魔爪。",
+        answer: "借喻",
+        explanation: "直接以喻體「魔爪」代指敵人的侵略黑手，無本體與喻詞，屬於【借喻】。"
+      }
+    ]
+  },
+
+  // 第八組：對比、擬人、排比、頂真、反復、對偶（干擾項：設問、暗喻）
+  {
+    groupTitle: "第八組",
+    bank: ["對比", "擬人", "排比", "頂真", "反復", "對偶", "設問", "暗喻"],
+    questions: [
+      {
+        id: "P5_G8_Q1",
+        sentence: "誠實的人走到哪裡都受人尊敬，說謊的人就算巧言令色也終究招人厭棄。",
+        answer: "對比",
+        explanation: "將「誠實受尊敬」與「說謊招厭棄」兩種相反情況對照，屬於【對比】。"
+      },
+      {
+        id: "P5_G8_Q2",
+        sentence: "嬌艷的玫瑰花在朝陽下綻放笑臉，熱情地向蜜蜂點頭問好。",
+        answer: "擬人",
+        explanation: "「綻放笑臉、點頭問好」賦予玫瑰花人類動作，屬於【擬人】。"
+      },
+      {
+        id: "P5_G8_Q3",
+        sentence: "真正的朋友會在你迷惘時給你指引，會在你失落時給你安慰，會在你成功時為你鼓掌。",
+        answer: "排比",
+        explanation: "三個「會在你……時……」結構相同的分句並列，屬於【排比】。"
+      },
+      {
+        id: "P5_G8_Q4",
+        sentence: "團結產生力量，力量帶來希望，希望照亮前路。",
+        answer: "頂真",
+        explanation: "「力量」、「希望」首尾相接，屬於【頂真】。"
+      },
+      {
+        id: "P5_G8_Q5",
+        sentence: "前進，前進，向前進！嘹亮的號角激勵著隊員們勇往直前。",
+        answer: "反復",
+        explanation: "連續重複「前進」以增強號召力與節奏感，屬於【反復】。"
+      },
+      {
+        id: "P5_G8_Q6",
+        sentence: "海闊憑魚躍，天高任鳥飛。",
+        answer: "對偶",
+        explanation: "「海闊」對「天高」、「憑魚躍」對「任鳥飛」，字數相等、對仗工整，屬於【對偶】。"
+      }
+    ]
+  },
+
+  // 第九組：設問、反問、明喻、對比、排比、頂真（干擾項：誇張、借喻）
+  {
+    groupTitle: "第九組",
+    bank: ["設問", "反問", "明喻", "對比", "排比", "頂真", "誇張", "借喻"],
+    questions: [
+      {
+        id: "P5_G9_Q1",
+        sentence: "甚麼是真正的勇敢？真正的勇敢是在看清困難後依然迎難而上。",
+        answer: "設問",
+        explanation: "有問有答，自問自答，屬於【設問】。"
+      },
+      {
+        id: "P5_G9_Q2",
+        sentence: "寸金難買寸光陰，白白浪費寶貴的時間，難道不是一件十分可惜的事嗎？",
+        answer: "反問",
+        explanation: "以「難道不是……嗎」反詰，強調浪費時間極為可惜，屬於【反問】。"
+      },
+      {
+        id: "P5_G9_Q3",
+        sentence: "哥哥奔跑的速度極快，有如離弦的飛箭一般衝向終點。",
+        answer: "明喻",
+        explanation: "喻詞為「有如……一般」，把奔跑的人比作飛箭，屬於【明喻】。"
+      },
+      {
+        id: "P5_G9_Q4",
+        sentence: "勤奮的人珍惜每一分每一秒努力學習，懶惰的人卻整天游手好閒虛度光陰。",
+        answer: "對比",
+        explanation: "將勤奮者與懶惰者對待時間的相反行為並列對照，屬於【對比】。"
+      },
+      {
+        id: "P5_G9_Q5",
+        sentence: "只有勇於面對失敗的人，只有敢於挑戰自我的人，只有堅持奮鬥到底的人，才能取得最後的勝利。",
+        answer: "排比",
+        explanation: "三個「只有……的人」分句排列整齊，屬於【排比】。"
+      },
+      {
+        id: "P5_G9_Q6",
+        sentence: "竹葉上有一滴露珠，露珠映著藍天，藍天飄著幾朵白雲。",
+        answer: "頂真",
+        explanation: "「露珠」、「藍天」上遞下接，屬於【頂真】。"
+      }
+    ]
+  },
+
+  // 第十組：誇張、擬人、暗喻、借喻、反復、對偶（干擾項：設問、反問）
+  {
+    groupTitle: "第十組",
+    bank: ["誇張", "擬人", "暗喻", "借喻", "反復", "對偶", "設問", "反問"],
+    questions: [
+      {
+        id: "P5_G10_Q1",
+        sentence: "這間小木屋只有巴掌般大小，放了一張桌子和一張床後便再也轉不過身了。",
+        answer: "誇張",
+        explanation: "縮小誇張，把小木屋形容為「只有巴掌般大小」，屬於【誇張】。"
+      },
+      {
+        id: "P5_G10_Q2",
+        sentence: "古老的時鐘在牆上不知疲倦地邁著步伐，低聲訴說著歲月的故事。",
+        answer: "擬人",
+        explanation: "時鐘「邁著步伐、訴說故事」賦予了人的行為，屬於【擬人】。"
+      },
+      {
+        id: "P5_G10_Q3",
+        sentence: "青春是一首充滿活力的樂曲，每一個音符都跳動著希望。",
+        answer: "暗喻",
+        explanation: "以「是」作為比喻詞，把青春比作樂曲，屬於【暗喻】。"
+      },
+      {
+        id: "P5_G10_Q4",
+        sentence: "暴風雨過後，花園裏嬌生慣養的鮮花都凋謝了，只有懸崖邊的青松依然挺立。",
+        answer: "借喻",
+        explanation: "不出現本體與喻詞，直接以「懸崖邊的青松」借喻堅強不屈的人，屬於【借喻】。"
+      },
+      {
+        id: "P5_G10_Q5",
+        sentence: "輕輕地，輕輕地，母親把滑落的棉被重新替熟睡的孩子蓋好。",
+        answer: "反復",
+        explanation: "重複疊用「輕輕地」以突顯母親溫柔體貼的動作，屬於【反復】。"
+      },
+      {
+        id: "P5_G10_Q6",
+        sentence: "風吹山間千竿竹，雨洗溪邊萬朵蓮。",
+        answer: "對偶",
+        explanation: "「風吹」對「雨洗」、「山間」對「溪邊」、「千竿竹」對「萬朵蓮」，對仗工整，屬於【對偶】。"
+      }
+    ]
+  }
+];
+
+const STORAGE_P5_MISTAKES = "p5_rhetoric_mistakes_v2";
+const ALL_12_RHETORICS = ["設問", "反問", "明喻", "對比", "誇張", "擬人", "排比", "暗喻", "借喻", "頂真", "反復", "對偶"];
+const LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H"];
+
+let currentMode = "quiz";
+let activeGroupIdx = 0;
+let userSelections = {};
+let selectedLetter = null;
+let activeSlotKey = null;
+let submittedGroups = {};
+
+// 錯題重測支援多組（每組最多 6 題配 8 個選項，防止超過 8 種修辭時缺選項）
+let mistakeQuizGroups = [];
+let activeMistakeGroupIdx = 0;
+
+function loadMistakes() {
+  try {
+    const raw = localStorage.getItem(STORAGE_P5_MISTAKES);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveMistakes(list) {
+  localStorage.setItem(STORAGE_P5_MISTAKES, JSON.stringify(list));
+  updateMistakeBadge();
+}
+
+function updateMistakeBadge() {
+  const el = document.getElementById("mistakeBadge");
+  if (el) el.textContent = loadMistakes().length;
+}
+
+function goHome() {
+  currentMode = "quiz";
+  selectedLetter = null;
+  activeSlotKey = null;
+  render();
+}
+
+function render() {
+  updateMistakeBadge();
+  const main = document.getElementById("mainView");
+  if (currentMode === "quiz") {
+    renderQuizView(main);
+  } else if (currentMode === "mistake_hub") {
+    renderMistakeHubView(main);
+  } else if (currentMode === "mistake_quiz") {
+    renderMistakeQuizView(main);
+  }
+}
+
+function renderQuizView(container) {
+  const grp = P5_DATA_GROUPS[activeGroupIdx];
+  const isSubmitted = !!submittedGroups[activeGroupIdx];
+  const chineseNums = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十"];
+
+  let tabsHtml = "";
+  P5_DATA_GROUPS.forEach((g, idx) => {
+    let cls = "group-tab";
+    if (idx === activeGroupIdx) cls += " active";
+    if (submittedGroups[idx]) cls += " done";
+
+    let scoreTxt = "";
+    if (submittedGroups[idx]) {
+      let c = 0;
+      g.questions.forEach((q, qi) => {
+        const userLetter = userSelections[`G${idx}_Q${qi}`];
+        const correctLetter = LETTERS[g.bank.indexOf(q.answer)];
+        if (userLetter === correctLetter) c++;
+      });
+      scoreTxt = ` (${c}/6)`;
+    }
+    tabsHtml += `<button class="${cls}" onclick="switchGroup(${idx})">第${chineseNums[idx]}組${scoreTxt}</button>`;
+  });
+
+  const usedLetters = new Set();
+  grp.questions.forEach((q, qi) => {
+    const val = userSelections[`G${activeGroupIdx}_Q${qi}`];
+    if (val) usedLetters.add(val);
+  });
+
+  let bankChipsHtml = "";
+  grp.bank.forEach((item, idx) => {
+    const letter = LETTERS[idx];
+    const isUsed = usedLetters.has(letter);
+    const isSelected = !isSubmitted && selectedLetter === letter;
+
+    let chipCls = "bank-chip";
+    if (isUsed) chipCls += " used";
+    if (isSelected) chipCls += " selected";
+    if (isSubmitted) chipCls += " locked";
+
+    const clickAttr = isSubmitted ? "" : `onclick="handleBankChipClick('${letter}')"`;
+
+    bankChipsHtml += `
+      <div class="${chipCls}" ${clickAttr}>
+        <strong>${letter}.</strong> ${item}
+      </div>
+    `;
+  });
+
+  let questionsHtml = "";
+  grp.questions.forEach((q, qIdx) => {
+    const qKey = `G${activeGroupIdx}_Q${qIdx}`;
+    const userLetter = userSelections[qKey] || "";
+    const correctLetter = LETTERS[grp.bank.indexOf(q.answer)];
+    const isTarget = !isSubmitted && activeSlotKey === qKey;
+
+    let slotCls = "answer-line-btn";
+    if (isTarget) slotCls += " active-target";
+    if (userLetter) slotCls += " filled";
+
+    let displayLetterText = userLetter ? `${userLetter}. ${grp.bank[LETTERS.indexOf(userLetter)]}` : "（點此填入）";
+    let badgeHtml = "";
+    let explHtml = "";
+
+    if (isSubmitted) {
+      slotCls += " locked";
+      if (userLetter === correctLetter) {
+        slotCls += " is-correct";
+        displayLetterText = `${userLetter} ✓`;
+      } else {
+        slotCls += " is-wrong";
+        displayLetterText = userLetter ? `${userLetter} ✗` : "（未作答）✗";
+        badgeHtml = `<span class="correction-badge">正確：${correctLetter}. ${q.answer}</span>`;
+      }
+
+      explHtml = `
+        <div class="teacher-explanation ${userLetter === correctLetter ? '' : 'wrong-box'}">
+          ${userLetter === correctLetter ? '✅ 答對！' : '❌ 答錯！'} 正確修辭為【<strong>${correctLetter}. ${q.answer}</strong>】。
+          <br>💡 <strong>教師解析：</strong>${q.explanation}
+        </div>
+      `;
+    }
+
+    const clickAttr = isSubmitted ? "" : `onclick="handleSlotClick('${qKey}')"`;
+
+    questionsHtml += `
+      <div class="question-item">
+        <div class="q-main-row">
+          <div class="q-text">
+            <strong>${qIdx + 1}.</strong> ${q.sentence}
+          </div>
+          <div class="answer-slot-box">
+            <span style="font-weight:700;">${qIdx + 1}.</span>
+            <span class="${slotCls}" ${clickAttr}>${displayLetterText}</span>
+            ${badgeHtml}
+          </div>
+        </div>
+        ${explHtml}
+      </div>
+    `;
+  });
+
+  let bottomActionHtml = "";
+  if (!isSubmitted) {
+    let answeredCount = 0;
+    grp.questions.forEach((q, qi) => {
+      if (userSelections[`G${activeGroupIdx}_Q${qi}`]) answeredCount++;
+    });
+
+    bottomActionHtml = `
+      <div class="footer-actions">
+        <div style="font-weight:700;color:var(--ink-muted);">
+          本組進度：<strong style="color:var(--accent-blue);">${answeredCount} / 6</strong> 題
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn" onclick="clearGroupAnswers(${activeGroupIdx})">🔄 清空重選</button>
+          <button class="btn btn-primary" onclick="submitGroup(${activeGroupIdx})">
+            ✅ 提交第${chineseNums[activeGroupIdx]}組並批改
+          </button>
+        </div>
+      </div>
+    `;
+  } else {
+    let groupCorrect = 0;
+    grp.questions.forEach((q, qi) => {
+      const userLetter = userSelections[`G${activeGroupIdx}_Q${qi}`];
+      const correctLetter = LETTERS[grp.bank.indexOf(q.answer)];
+      if (userLetter === correctLetter) groupCorrect++;
+    });
+
+    const nextBtn = activeGroupIdx < 9
+      ? `<button class="btn btn-primary" onclick="switchGroup(${activeGroupIdx + 1})">➡️ 進入第${chineseNums[activeGroupIdx + 1]}組</button>`
+      : `<button class="btn btn-primary" onclick="scrollToFullReport()">📊 查看全卷 60 題總成績</button>`;
+
+    bottomActionHtml = `
+      <div class="group-summary-card">
+        <div class="summary-title">
+          <span>📋 第${chineseNums[activeGroupIdx]}組小結算報告</span>
+          <span style="color:${groupCorrect === 6 ? 'var(--correct-green)' : 'var(--accent-blue)'}">
+            本組得分：${groupCorrect} / 6 題
+          </span>
+        </div>
+        <p style="font-size:0.95rem;color:var(--ink-muted);margin-bottom:14px;">
+          ${groupCorrect === 6 ? "太棒了！本組 6 條題目全部辨別正確！" : `本組有 ${6 - groupCorrect} 題答錯，已自動記入「錯題溫習專區」，請仔細閱讀每題教學解析。`}
+        </p>
+        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <button class="btn" onclick="retryGroup(${activeGroupIdx})">🔁 重做本組 6 題</button>
+          ${nextBtn}
+        </div>
+      </div>
+    `;
+  }
+
+  let fullExamReportHtml = "";
+  const allFinished = P5_DATA_GROUPS.every((g, idx) => submittedGroups[idx]);
+  if (allFinished) {
+    let grandTotal = 0;
+    P5_DATA_GROUPS.forEach((g, gIdx) => {
+      g.questions.forEach((q, qi) => {
+        const userLetter = userSelections[`G${gIdx}_Q${qi}`];
+        const correctLetter = LETTERS[g.bank.indexOf(q.answer)];
+        if (userLetter === correctLetter) grandTotal++;
+      });
+    });
+    const finalScore = Math.round((grandTotal / 60) * 100);
+
+    fullExamReportHtml = `
+      <div id="fullReportSection" class="group-summary-card" style="margin-top:24px;border:3px solid var(--accent-blue);background:#eff6ff;">
+        <div class="summary-title">
+          <span>🏆 小五修辭練習 — 全卷 60 題總成績報告</span>
+          <span style="font-size:1.45rem;color:var(--accent-blue);">${grandTotal} / 60 題 (${finalScore}分)</span>
+        </div>
+        <p style="font-size:1rem;margin:12px 0;">
+          ${finalScore >= 90 ? "🌟 成績拔尖！你對小五全部 12 種修辭手法的特徵辨析極為透徹！" : "溫馨提示：高階修辭（如借喻、頂真、對比）容易混淆，請點擊下方「錯題溫習」強化鞏固。"}
+        </p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <button class="btn btn-danger" onclick="openMistakeCenter()">📕 進入錯題溫習</button>
+          <button class="btn" onclick="resetAllQuiz()">🔄 重新作答全卷 60 題</button>
+        </div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = `
+    <div class="exam-paper">
+      <div class="school-header">
+        <div class="quiz-title">小五中文科修辭練習</div>
+      </div>
+
+      <div class="exam-section-title">
+        修辭：辨別句子的修辭手法，把代表正確答案的英文字母填在橫線上。（全卷共 10 組，每組 6 題）
+      </div>
+
+      <div class="group-tabs">
+        ${tabsHtml}
+      </div>
+
+      <div class="bank-sticky-wrapper">
+        <div class="bank-header-label">
+          <span>第${chineseNums[activeGroupIdx]}組修辭供詞欄（點選字母填入橫線，每選項限用一次）：</span>
+        </div>
+        <div class="bank-box">
+          ${bankChipsHtml}
+        </div>
+      </div>
+
+      <div class="questions-container">
+        ${questionsHtml}
+      </div>
+
+      ${bottomActionHtml}
+      ${fullExamReportHtml}
+    </div>
+  `;
+}
+
+function handleBankChipClick(letter) {
+  const grp = P5_DATA_GROUPS[activeGroupIdx];
+  if (submittedGroups[activeGroupIdx]) return;
+
+  if (activeSlotKey) {
+    grp.questions.forEach((q, qi) => {
+      const k = `G${activeGroupIdx}_Q${qi}`;
+      if (userSelections[k] === letter) delete userSelections[k];
+    });
+
+    userSelections[activeSlotKey] = letter;
+    selectedLetter = null;
+
+    let nextKey = null;
+    for (let i = 0; i < 6; i++) {
+      const checkKey = `G${activeGroupIdx}_Q${i}`;
+      if (!userSelections[checkKey]) {
+        nextKey = checkKey;
+        break;
+      }
+    }
+    activeSlotKey = nextKey;
+    render();
+  } else {
+    selectedLetter = (selectedLetter === letter) ? null : letter;
+    render();
+  }
+}
+
+function handleSlotClick(qKey) {
+  const grp = P5_DATA_GROUPS[activeGroupIdx];
+  if (submittedGroups[activeGroupIdx]) return;
+
+  if (selectedLetter) {
+    grp.questions.forEach((q, qi) => {
+      const k = `G${activeGroupIdx}_Q${qi}`;
+      if (userSelections[k] === selectedLetter) delete userSelections[k];
+    });
+
+    userSelections[qKey] = selectedLetter;
+    selectedLetter = null;
+    activeSlotKey = null;
+  } else if (userSelections[qKey]) {
+    delete userSelections[qKey];
+    activeSlotKey = qKey;
+  } else {
+    activeSlotKey = (activeSlotKey === qKey) ? null : qKey;
+  }
+  render();
+}
+
+function switchGroup(idx) {
+  activeGroupIdx = idx;
+  selectedLetter = null;
+  activeSlotKey = null;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  render();
+}
+
+function clearGroupAnswers(gIdx) {
+  P5_DATA_GROUPS[gIdx].questions.forEach((q, qi) => {
+    delete userSelections[`G${gIdx}_Q${qi}`];
+  });
+  selectedLetter = null;
+  activeSlotKey = null;
+  render();
+}
+
+function retryGroup(gIdx) {
+  delete submittedGroups[gIdx];
+  clearGroupAnswers(gIdx);
+}
+
+function submitGroup(gIdx) {
+  const grp = P5_DATA_GROUPS[gIdx];
+  let unDone = 0;
+  grp.questions.forEach((q, qi) => {
+    if (!userSelections[`G${gIdx}_Q${qi}`]) unDone++;
+  });
+
+  if (unDone > 0) {
+    if (!confirm(`本組尚有 ${unDone} 題未填寫，確定要現在提交並批改嗎？`)) return;
+  }
+
+  submittedGroups[gIdx] = true;
+  selectedLetter = null;
+  activeSlotKey = null;
+
+  const mistakes = loadMistakes();
+  const mistakeMap = new Map(mistakes.map(m => [m.id, m]));
+
+  grp.questions.forEach((q, qi) => {
+    const userLetter = userSelections[`G${gIdx}_Q${qi}`] || "";
+    const correctLetter = LETTERS[grp.bank.indexOf(q.answer)];
+    const userText = userLetter ? `${userLetter}. ${grp.bank[LETTERS.indexOf(userLetter)]}` : "（未作答）";
+
+    if (userLetter !== correctLetter) {
+      mistakeMap.set(q.id, {
+        id: q.id,
+        sentence: q.sentence,
+        answer: q.answer,
+        userText: userText,
+        explanation: q.explanation,
+        groupTitle: grp.groupTitle,
+        timestamp: Date.now()
+      });
+    }
+  });
+
+  saveMistakes(Array.from(mistakeMap.values()));
+  render();
+}
+
+function scrollToFullReport() {
+  const el = document.getElementById("fullReportSection");
+  if (el) el.scrollIntoView({ behavior: "smooth" });
+}
+
+function resetAllQuiz() {
+  if (!confirm("確定要重設全卷所有 60 題答案並重新開始嗎？")) return;
+  userSelections = {};
+  submittedGroups = {};
+  activeGroupIdx = 0;
+  selectedLetter = null;
+  activeSlotKey = null;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  render();
+}
+
+function openMistakeCenter() {
+  currentMode = "mistake_hub";
+  selectedLetter = null;
+  activeSlotKey = null;
+  render();
+}
+
+function renderMistakeHubView(container) {
+  const mistakes = loadMistakes();
+
+  if (mistakes.length === 0) {
+    container.innerHTML = `
+      <div class="exam-paper" style="text-align:center;padding:48px 24px;">
+        <h2 style="font-size:1.5rem;margin-bottom:12px;">🎉 太厲害了！目前沒有任何錯題記錄！</h2>
+        <p style="color:var(--ink-muted);margin-bottom:24px;">
+          你在 10 組小測中做錯的題目會自動存入此處，方便考前專注重溫。
+        </p>
+        <button class="btn btn-primary" onclick="goHome()">🏠 返回練習目錄</button>
+      </div>
+    `;
+    return;
+  }
+
+  let listHtml = "";
+  mistakes.forEach((m, idx) => {
+    listHtml += `
+      <div class="mistake-item">
+        <div class="mistake-sentence">${idx + 1}. ${m.sentence}</div>
+        <div class="mistake-tag">
+          來源：${m.groupTitle} ｜ 上次誤選：<span style="color:var(--wrong-red);text-decoration:line-through;">${m.userText}</span>
+        </div>
+        <div class="teacher-explanation" style="margin-top:8px;">
+          ✅ <strong>正確修辭手法：${m.answer}</strong><br>
+          💡 <strong>解析：</strong>${m.explanation}
+        </div>
+        <div style="margin-top:10px;text-align:right;">
+          <button class="btn" onclick="removeMistake('${m.id}')">✅ 已熟練掌握，移出錯題簿</button>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = `
+    <div class="exam-paper">
+      <div class="school-header">
+        <div class="quiz-title">小五中文科修辭練習 — 📕 錯題溫習專區</div>
+        <div style="margin-top:8px;font-weight:700;color:var(--wrong-red);">
+          目前累積錯題：${mistakes.length} 題
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px;">
+        <button class="btn btn-primary" onclick="startMistakeRetest()">
+          ✍️ 啟動「錯題重測」（只考這 ${mistakes.length} 題）
+        </button>
+        <button class="btn btn-danger" onclick="clearAllMistakes()">
+          🗑️ 清空所有錯題記錄
+        </button>
+      </div>
+
+      <div>
+        ${listHtml}
+      </div>
+    </div>
+  `;
+}
+
+function removeMistake(id) {
+  const filtered = loadMistakes().filter(m => m.id !== id);
+  saveMistakes(filtered);
+  render();
+}
+
+function clearAllMistakes() {
+  if (!confirm("確定要清空所有錯題記錄嗎？")) return;
+  saveMistakes([]);
+  render();
+}
+
+// 錯題重測：動態分組（每組最多 6 題且不重複修辭，每組配足 8 個 A-H 選項）
+function startMistakeRetest() {
+  const mistakes = loadMistakes();
+  if (mistakes.length === 0) return;
+
+  const rawGroups = [];
+  mistakes.forEach(m => {
+    let placed = false;
+    for (const g of rawGroups) {
+      if (g.length < 6 && !g.some(x => x.answer === m.answer)) {
+        g.push(m);
+        placed = true;
+        break;
+      }
+    }
+    if (!placed) rawGroups.push([m]);
+  });
+
+  mistakeQuizGroups = rawGroups.map((gItems, idx) => {
+    const bankSet = new Set(gItems.map(x => x.answer));
+    for (const r of ALL_12_RHETORICS) {
+      if (bankSet.size < 8) bankSet.add(r);
+    }
+    return {
+      groupIdx: idx,
+      bank: Array.from(bankSet),
+      questions: gItems,
+      userAnswers: {},
+      submitted: false
+    };
+  });
+
+  activeMistakeGroupIdx = 0;
+  currentMode = "mistake_quiz";
+  selectedLetter = null;
+  activeSlotKey = null;
+  render();
+}
+
+function renderMistakeQuizView(container) {
+  const grp = mistakeQuizGroups[activeMistakeGroupIdx];
+  const isSubmitted = grp.submitted;
+
+  let tabsHtml = "";
+  if (mistakeQuizGroups.length > 1) {
+    mistakeQuizGroups.forEach((g, idx) => {
+      let cls = "group-tab";
+      if (idx === activeMistakeGroupIdx) cls += " active";
+      if (g.submitted) cls += " done";
+      tabsHtml += `<button class="${cls}" onclick="switchMistakeGroup(${idx})">錯題第 ${idx + 1} 組 (${g.questions.length}題)</button>`;
+    });
+    tabsHtml = `<div class="group-tabs">${tabsHtml}</div>`;
+  }
+
+  const usedLetters = new Set(Object.values(grp.userAnswers).filter(Boolean));
+
+  let bankChipsHtml = "";
+  grp.bank.forEach((item, idx) => {
+    const letter = LETTERS[idx];
+    const isUsed = usedLetters.has(letter);
+    const isSelected = !isSubmitted && selectedLetter === letter;
+
+    let chipCls = "bank-chip";
+    if (isUsed) chipCls += " used";
+    if (isSelected) chipCls += " selected";
+    if (isSubmitted) chipCls += " locked";
+
+    const clickAttr = isSubmitted ? "" : `onclick="handleMistakeBankChipClick('${letter}')"`;
+
+    bankChipsHtml += `
+      <div class="${chipCls}" ${clickAttr}>
+        <strong>${letter}.</strong> ${item}
+      </div>
+    `;
+  });
+
+  let questionsHtml = "";
+  grp.questions.forEach((q, qIdx) => {
+    const userLetter = grp.userAnswers[q.id] || "";
+    const correctLetter = LETTERS[grp.bank.indexOf(q.answer)];
+    const isTarget = !isSubmitted && activeSlotKey === q.id;
+
+    let slotCls = "answer-line-btn";
+    if (isTarget) slotCls += " active-target";
+    if (userLetter) slotCls += " filled";
+
+    let displayLetterText = userLetter ? `${userLetter}. ${grp.bank[LETTERS.indexOf(userLetter)]}` : "（點此填入）";
+    let badgeHtml = "";
+    let explHtml = "";
+
+    if (isSubmitted) {
+      slotCls += " locked";
+      if (userLetter === correctLetter) {
+        slotCls += " is-correct";
+        displayLetterText = `${userLetter} ✓`;
+      } else {
+        slotCls += " is-wrong";
+        displayLetterText = userLetter ? `${userLetter} ✗` : "（未作答）✗";
+        badgeHtml = `<span class="correction-badge">正確：${correctLetter}. ${q.answer}</span>`;
+      }
+
+      explHtml = `
+        <div class="teacher-explanation ${userLetter === correctLetter ? '' : 'wrong-box'}">
+          ${userLetter === correctLetter ? '✅ 答對！' : '❌ 答錯！'} 正確修辭為【<strong>${correctLetter}. ${q.answer}</strong>】。
+          <br>💡 <strong>解析：</strong>${q.explanation}
+        </div>
+      `;
+    }
+
+    const clickAttr = isSubmitted ? "" : `onclick="handleMistakeSlotClick('${q.id}')"`;
+
+    questionsHtml += `
+      <div class="question-item">
+        <div class="q-main-row">
+          <div class="q-text">
+            <strong>${qIdx + 1}.</strong> ${q.sentence}
+          </div>
+          <div class="answer-slot-box">
+            <span style="font-weight:700;">${qIdx + 1}.</span>
+            <span class="${slotCls}" ${clickAttr}>${displayLetterText}</span>
+            ${badgeHtml}
+          </div>
+        </div>
+        ${explHtml}
+      </div>
+    `;
+  });
+
+  let bottomHtml = "";
+  if (!isSubmitted) {
+    bottomHtml = `
+      <div class="footer-actions">
+        <button class="btn" onclick="openMistakeCenter()">⬅️ 返回錯題列表</button>
+        <button class="btn btn-primary" onclick="submitMistakeRetest()">✅ 提交本組錯題重測</button>
+      </div>
+    `;
+  } else {
+    let correctCount = 0;
+    const correctIds = [];
+    grp.questions.forEach(q => {
+      const userLetter = grp.userAnswers[q.id];
+      const correctLetter = LETTERS[grp.bank.indexOf(q.answer)];
+      if (userLetter === correctLetter) {
+        correctCount++;
+        correctIds.push(q.id);
+      }
+    });
+
+    bottomHtml = `
+      <div class="group-summary-card">
+        <div class="summary-title">
+          <span>📋 錯題重測結果：答對 ${correctCount} / ${grp.questions.length} 題</span>
+        </div>
+        <p style="font-size:0.95rem;color:var(--ink-muted);margin-bottom:14px;">
+          恭喜你本次答對了 ${correctCount} 題！點擊下方按鈕可將答對的題目自動移出錯題簿。
+        </p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          ${correctCount > 0 ? `<button class="btn btn-primary" onclick="removeBatchMistakes(${JSON.stringify(correctIds).replace(/"/g, '&quot;')})">🌟 將本次答對的 ${correctCount} 題移出錯題簿</button>` : ''}
+          ${activeMistakeGroupIdx < mistakeQuizGroups.length - 1 ? `<button class="btn" onclick="switchMistakeGroup(${activeMistakeGroupIdx + 1})">➡️ 下一組錯題</button>` : ''}
+          <button class="btn" onclick="openMistakeCenter()">📕 返回錯題專區</button>
+        </div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = `
+    <div class="exam-paper">
+      <div class="school-header">
+        <div class="quiz-title">小五中文科修辭練習 — 📕 錯題專項重測卷</div>
+      </div>
+
+      ${tabsHtml}
+
+      <div class="bank-sticky-wrapper">
+        <div class="bank-header-label">
+          <span>重測供詞欄（點選字母填入橫線，每選項限用一次）：</span>
+        </div>
+        <div class="bank-box">
+          ${bankChipsHtml}
+        </div>
+      </div>
+
+      <div class="questions-container">
+        ${questionsHtml}
+      </div>
+
+      ${bottomHtml}
+    </div>
+  `;
+}
+
+function switchMistakeGroup(idx) {
+  activeMistakeGroupIdx = idx;
+  selectedLetter = null;
+  activeSlotKey = null;
+  render();
+}
+
+function handleMistakeBankChipClick(letter) {
+  const grp = mistakeQuizGroups[activeMistakeGroupIdx];
+  if (grp.submitted) return;
+
+  if (activeSlotKey) {
+    Object.keys(grp.userAnswers).forEach(k => {
+      if (grp.userAnswers[k] === letter) delete grp.userAnswers[k];
+    });
+    grp.userAnswers[activeSlotKey] = letter;
+    selectedLetter = null;
+    activeSlotKey = null;
+    render();
+  } else {
+    selectedLetter = (selectedLetter === letter) ? null : letter;
+    render();
+  }
+}
+
+function handleMistakeSlotClick(qId) {
+  const grp = mistakeQuizGroups[activeMistakeGroupIdx];
+  if (grp.submitted) return;
+
+  if (selectedLetter) {
+    Object.keys(grp.userAnswers).forEach(k => {
+      if (grp.userAnswers[k] === selectedLetter) delete grp.userAnswers[k];
+    });
+    grp.userAnswers[qId] = selectedLetter;
+    selectedLetter = null;
+    activeSlotKey = null;
+  } else if (grp.userAnswers[qId]) {
+    delete grp.userAnswers[qId];
+    activeSlotKey = qId;
+  } else {
+    activeSlotKey = (activeSlotKey === qId) ? null : qId;
+  }
+  render();
+}
+
+function submitMistakeRetest() {
+  const grp = mistakeQuizGroups[activeMistakeGroupIdx];
+  grp.submitted = true;
+  selectedLetter = null;
+  activeSlotKey = null;
+  render();
+}
+
+function removeBatchMistakes(idList) {
+  const idSet = new Set(idList);
+  const remaining = loadMistakes().filter(m => !idSet.has(m.id));
+  saveMistakes(remaining);
+  openMistakeCenter();
+}
+
+render();
+</script>
+</body>
+</html>

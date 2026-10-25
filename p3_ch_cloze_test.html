@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>小三中文科修辭練習</title>
+
+<!-- iOS / iPad 主畫面全螢幕 Web App 設定 -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="小三修辭練習">
+
+<!-- Android / Chrome 全螢幕設定 -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#fcfaf5">
+
+<!-- 內嵌 SVG App Icon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23b91c1c'/><text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' font-size='50'>✏️</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23b91c1c'/><text x='50%' y='58%' dominant-baseline='middle' text-anchor='middle' font-size='50'>✏️</text></svg>">
+
+<!-- 內嵌 Web App Manifest -->
+<link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;小三中文科修辭練習&quot;,&quot;short_name&quot;:&quot;小三修辭&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23fcfaf5&quot;,&quot;theme_color&quot;:&quot;%23b91c1c&quot;}">
+
+<style>
+  :root {
+    --paper-bg: #fcfaf5;
+    --paper-line: #dcd7cc;
+    --ink: #1a1e24;
+    --ink-muted: #555e68;
+    --border-strong: #222831;
+    --accent-red: #b91c1c;
+    --accent-blue: #1d4ed8;
+    --correct-green: #15803d;
+    --correct-bg: #dcfce7;
+    --wrong-red: #b91c1c;
+    --wrong-bg: #fee2e2;
+    --circle-unfilled: #94a3b8;
+    --circle-filled: #1e293b;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: "PingFang HK", "Microsoft JhengHei", "Heiti TC", "Kaiti TC", serif;
+    background-color: #e8e5df;
+    color: var(--ink);
+    line-height: 1.65;
+    padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    touch-action: manipulation;
+  }
+
+  .app-shell {
+    max-width: 880px;
+    margin: 0 auto;
+  }
+
+  /* 頂部操作欄 */
+  .top-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    background: #ffffff;
+    padding: 12px 18px;
+    border-radius: 8px;
+    border: 2px solid var(--border-strong);
+    margin-bottom: 16px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.06);
+  }
+
+  .brand-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .teacher-badge {
+    font-size: 0.78rem;
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #f59e0b;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-weight: 700;
+  }
+
+  .nav-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.92rem;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: 2px solid var(--border-strong);
+    background: #fff;
+    color: var(--ink);
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    touch-action: manipulation;
+  }
+
+  .btn:hover:not(:disabled) {
+    background: #f1f5f9;
+    transform: translateY(-1px);
+  }
+
+  .btn-primary {
+    background: var(--accent-blue);
+    color: #fff;
+    border-color: var(--accent-blue);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: #1e40af;
+  }
+
+  .btn-danger {
+    background: var(--wrong-bg);
+    color: var(--wrong-red);
+    border-color: var(--wrong-red);
+  }
+
+  /* 仿香港小學測驗卷紙張 */
+  .exam-paper {
+    background: var(--paper-bg);
+    border: 2px solid var(--border-strong);
+    padding: 28px 32px;
+    border-radius: 4px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+    position: relative;
+  }
+
+  .school-header {
+    text-align: center;
+    margin-bottom: 14px;
+    border-bottom: 2px solid var(--border-strong);
+    padding-bottom: 12px;
+  }
+
+  .quiz-title {
+    font-size: 1.55rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+  }
+
+  .exam-section-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin: 14px 0 16px 0;
+    line-height: 1.6;
+    background: rgba(0,0,0,0.03);
+    padding: 8px 12px;
+    border-left: 4px solid var(--border-strong);
+  }
+
+  /* 小組頁籤 */
+  .group-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1.5px dashed var(--paper-line);
+  }
+
+  .group-tab {
+    padding: 6px 12px;
+    border: 1.5px solid var(--border-strong);
+    background: #fff;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .group-tab.active {
+    background: var(--ink);
+    color: #fff;
+  }
+
+  .group-tab.done {
+    border-color: var(--correct-green);
+    background: var(--correct-bg);
+    color: var(--correct-green);
+  }
+
+  .group-tab.done.active {
+    background: var(--correct-green);
+    color: #fff;
+  }
+
+  /* 題目卡片 */
+  .question-block {
+    margin-bottom: 22px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--paper-line);
+  }
+
+  .q-sentence {
+    font-size: 1.18rem;
+    font-weight: 700;
+    line-height: 1.8;
+    margin-bottom: 10px;
+  }
+
+  .q-index {
+    display: inline-block;
+    min-width: 24px;
+  }
+
+  /* 仿測驗卷 4 個圓圈選項佈局 */
+  .options-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .option-btn {
+    cursor: pointer;
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+    transition: all 0.15s ease;
+    touch-action: manipulation;
+  }
+
+  .option-btn:hover:not(.locked) {
+    border-color: var(--accent-blue);
+    background: #f8fafc;
+  }
+
+  /* 仿真圓圈（○ / ●） */
+  .circle-radio {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--circle-unfilled);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+  }
+
+  .option-btn.selected {
+    border-color: var(--border-strong);
+    background: #eff6ff;
+  }
+
+  .option-btn.selected .circle-radio {
+    border-color: var(--circle-filled);
+    background-color: var(--circle-filled);
+    box-shadow: inset 0 0 0 2px #fff;
+  }
+
+  /* 結算後狀態 */
+  .option-btn.is-correct {
+    border-color: var(--correct-green) !important;
+    background: var(--correct-bg) !important;
+    color: var(--correct-green);
+  }
+
+  .option-btn.is-correct .circle-radio {
+    border-color: var(--correct-green);
+    background: var(--correct-green);
+    box-shadow: inset 0 0 0 2px #fff;
+  }
+
+  .option-btn.is-wrong-picked {
+    border-color: var(--wrong-red) !important;
+    background: var(--wrong-bg) !important;
+    color: var(--wrong-red);
+    text-decoration: line-through;
+  }
+
+  .option-btn.is-wrong-picked .circle-radio {
+    border-color: var(--wrong-red);
+    background: var(--wrong-red);
+    box-shadow: inset 0 0 0 2px #fff;
+  }
+
+  /* 教師教學解析提示 */
+  .teacher-explanation {
+    margin-top: 8px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #166534;
+  }
+
+  .teacher-explanation.wrong-box {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    color: #991b1b;
+  }
+
+  /* 底部結算按鈕與小結算卡 */
+  .footer-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .group-summary-card {
+    margin-top: 22px;
+    padding: 20px;
+    border: 2px solid var(--border-strong);
+    background: #ffffff;
+    border-radius: 8px;
+  }
+
+  .summary-title {
+    font-size: 1.22rem;
+    font-weight: 900;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* 錯題溫習介面 */
+  .mistake-item {
+    background: #fff;
+    border: 1.5px solid #cbd5e1;
+    border-left: 5px solid var(--wrong-red);
+    padding: 14px 16px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+  }
+
+  .mistake-sentence {
+    font-size: 1.12rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .mistake-tag {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--ink-muted);
+  }
+
+  @media (max-width: 680px) {
+    .exam-paper {
+      padding: 18px 14px;
+    }
+    .options-row {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .q-sentence {
+      font-size: 1.1rem;
+    }
+    .option-btn {
+      font-size: 0.98rem;
+      padding: 8px 6px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <!-- 頂部控制列 -->
+  <header class="top-nav">
+    <div class="brand-title">
+      <span>📖 小三中文科修辭練習</span>
+      <span class="teacher-badge">資深教師審訂版 (45題)</span>
+    </div>
+    <div class="nav-actions">
+      <button class="btn" onclick="goHome()">🏠 練習目錄</button>
+      <button class="btn btn-danger" onclick="openMistakeCenter()" id="navMistakeBtn">
+        📕 錯題溫習 (<span id="mistakeBadge">0</span>)
+      </button>
+    </div>
+  </header>
+
+  <!-- 主內容掛載點 -->
+  <main id="mainView"></main>
+</div>
+
+<script>
+/**
+ * 嚴格限定之小三 9 種修辭手法（已移除「對比」）：
+ * 1. 擬人  2. 誇張  3. 設問  4. 反問  5. 排比
+ * 6. 反復  7. 對偶  8. 暗喻  9. 明喻
+ *
+ * 教師審訂版：共 9 組，每組 5 題（合共 45 題）。
+ * 確保每句只有單一最顯著修辭，排除雙重修辭干擾，對偶句字詞淺白工整。
+ */
+const P3_DATA_GROUPS = [
+  // 第一組（擬人、誇張、設問、反問、明喻）
+  {
+    groupTitle: "第一組",
+    questions: [
+      {
+        id: "P3_G1_Q1",
+        sentence: "兩岸的楊柳隨微風跳舞，真優美！",
+        answer: "擬人",
+        options: ["擬人", "誇張", "排比", "明喻"],
+        explanation: "「跳舞」賦予了楊柳人的動作，屬於【擬人】。"
+      },
+      {
+        id: "P3_G1_Q2",
+        sentence: "我一整天沒有吃過東西，現在連一頭豬也能吃得下。",
+        answer: "誇張",
+        options: ["明喻", "誇張", "擬人", "對偶"],
+        explanation: "把飢餓的程度故意放大到「能吃下一頭豬」，屬於【誇張】。"
+      },
+      {
+        id: "P3_G1_Q3",
+        sentence: "你知道甚麼動物有「萬獸之王」之稱嗎？是獅子。",
+        answer: "設問",
+        options: ["擬人", "誇張", "設問", "反問"],
+        explanation: "先提出問題，然後自己回答出「是獅子」（自問自答），屬於【設問】。"
+      },
+      {
+        id: "P3_G1_Q4",
+        sentence: "你能學會游泳，難道我就學不會嗎？",
+        answer: "反問",
+        options: ["設問", "反問", "誇張", "明喻"],
+        explanation: "心中已有明確答案（我也一定能學會），用疑問形式加強語氣且沒有自答，屬於【反問】。"
+      },
+      {
+        id: "P3_G1_Q5",
+        sentence: "中秋夜的月亮又圓又亮，像一個銀盤懸掛在天空中。",
+        answer: "明喻",
+        options: ["明喻", "對偶", "排比", "反復"],
+        explanation: "以「像」作為喻詞，把「月亮」比作「銀盤」，屬於【明喻】。"
+      }
+    ]
+  },
+
+  // 第二組（排比、反復、對偶、暗喻、擬人）
+  {
+    groupTitle: "第二組",
+    questions: [
+      {
+        id: "P3_G2_Q1",
+        sentence: "哥哥喜歡吃荔枝，覺得它清香可口；姐姐喜歡吃西瓜，覺得它甜美多汁；妹妹喜歡吃蘋果，覺得它清甜爽脆。",
+        answer: "排比",
+        options: ["對偶", "排比", "反復", "擬人"],
+        explanation: "由三個結構相同、語氣一致的分句排列而成，屬於【排比】。"
+      },
+      {
+        id: "P3_G2_Q2",
+        sentence: "盼望著，盼望著，一年一度的學校旅行日終於到來了！",
+        answer: "反復",
+        options: ["排比", "反復", "誇張", "暗喻"],
+        explanation: "連續重複使用「盼望著」以強調熱切期待的心情，屬於【反復】。"
+      },
+      {
+        id: "P3_G2_Q3",
+        sentence: "白日依山盡，黃河入海流。",
+        answer: "對偶",
+        options: ["對偶", "排比", "暗喻", "反問"],
+        explanation: "上下兩句字數相等（五言）、詞性相對、結構對稱，屬於【對偶】。"
+      },
+      {
+        id: "P3_G2_Q4",
+        sentence: "書籍是人類進步的階梯。",
+        answer: "暗喻",
+        options: ["明喻", "暗喻", "擬人", "設問"],
+        explanation: "使用「是」作為喻詞把書籍比作階梯，本體與喻體直接相連，屬於【暗喻】。"
+      },
+      {
+        id: "P3_G2_Q5",
+        sentence: "春天喚醒了沉睡的溪流，讓它再次唱出動聽的歌聲。",
+        answer: "擬人",
+        options: ["擬人", "誇張", "明喻", "反問"],
+        explanation: "賦予溪流「沉睡」和「唱歌」等人的行為特徵，屬於【擬人】。"
+      }
+    ]
+  },
+
+  // 第三組（誇張、設問、反問、明喻、排比）
+  {
+    groupTitle: "第三組",
+    questions: [
+      {
+        id: "P3_G3_Q1",
+        sentence: "提起香甜的巧克力冰淇淋，妹妹就垂涎三尺。",
+        answer: "誇張",
+        options: ["誇張", "擬人", "暗喻", "對偶"],
+        explanation: "「垂涎三尺」將流口水的長度極度誇大，屬於【誇張】。"
+      },
+      {
+        id: "P3_G3_Q2",
+        sentence: "甚麼是快樂？快樂就是能幫助有需要的人。",
+        answer: "設問",
+        options: ["反問", "設問", "排比", "反復"],
+        explanation: "先提出問題再自行回答，屬於【設問】。"
+      },
+      {
+        id: "P3_G3_Q3",
+        sentence: "看到同學跌倒受傷，我們怎能坐視不理呢？",
+        answer: "反問",
+        options: ["設問", "反問", "擬人", "明喻"],
+        explanation: "用疑問句表達肯定意思（絕不能坐視不理），屬於【反問】。"
+      },
+      {
+        id: "P3_G3_Q4",
+        sentence: "春天到了，大地就像一幅美麗的圖畫，充滿了色彩。",
+        answer: "明喻",
+        options: ["暗喻", "明喻", "擬人", "排比"],
+        explanation: "帶有比喻詞「就像」，把大地比作圖畫，屬於【明喻】。"
+      },
+      {
+        id: "P3_G3_Q5",
+        sentence: "閱讀能開闊我們的眼界，閱讀能豐富我們的知識，閱讀能啟發我們的思考。",
+        answer: "排比",
+        options: ["排比", "反復", "對偶", "暗喻"],
+        explanation: "連續三個「閱讀能……」結構整齊的分句，屬於【排比】。"
+      }
+    ]
+  },
+
+  // 第四組（反復、對偶、暗喻、擬人、誇張）
+  {
+    groupTitle: "第四組",
+    questions: [
+      {
+        id: "P3_G4_Q1",
+        sentence: "走吧，走吧，我們一起去迎接美麗的朝陽！",
+        answer: "反復",
+        options: ["排比", "反復", "擬人", "設問"],
+        explanation: "連續重複使用「走吧」以增強催促與感染力，屬於【反復】。"
+      },
+      {
+        id: "P3_G4_Q2",
+        sentence: "野火燒不盡，春風吹又生。",
+        answer: "對偶",
+        options: ["對偶", "排比", "明喻", "反復"],
+        explanation: "「野火」對「春風」、「燒不盡」對「吹又生」，字數相等、詞性對稱，屬於【對偶】。"
+      },
+      {
+        id: "P3_G4_Q3",
+        sentence: "滿天的繁星成了黑夜中一盞盞明亮的路燈。",
+        answer: "暗喻",
+        options: ["明喻", "暗喻", "誇張", "擬人"],
+        explanation: "喻詞為「成了」，把繁星比喻成路燈，屬於【暗喻】。"
+      },
+      {
+        id: "P3_G4_Q4",
+        sentence: "淘氣的小雨點在荷葉上快活地跳躍、唱歌。",
+        answer: "擬人",
+        options: ["擬人", "誇張", "反復", "明喻"],
+        explanation: "賦予小雨點「淘氣」、「跳躍、唱歌」的人格化特徵，屬於【擬人】。"
+      },
+      {
+        id: "P3_G4_Q5",
+        sentence: "課室裡安靜得連一根針掉在地上的聲音都能聽得清清楚楚。",
+        answer: "誇張",
+        options: ["暗喻", "誇張", "設問", "對偶"],
+        explanation: "把安靜的程度極端放大到能聽見掉針聲，屬於【誇張】。"
+      }
+    ]
+  },
+
+  // 第五組（設問、反問、明喻、排比、反復）
+  {
+    groupTitle: "第五組",
+    questions: [
+      {
+        id: "P3_G5_Q1",
+        sentence: "誰是每天最早到校的人？就是默默為大家開門的校工叔叔。",
+        answer: "設問",
+        options: ["設問", "反問", "擬人", "誇張"],
+        explanation: "自問自答引起注意，屬於【設問】。"
+      },
+      {
+        id: "P3_G5_Q2",
+        sentence: "父母每天辛苦工作照顧我們，難道我們不應該孝順他們嗎？",
+        answer: "反問",
+        options: ["設問", "反問", "暗喻", "對偶"],
+        explanation: "反詰問句，答案就在句子中（我們必須孝順父母），屬於【反問】。"
+      },
+      {
+        id: "P3_G5_Q3",
+        sentence: "運動員像離弦的箭一樣，飛快地朝著終點衝刺。",
+        answer: "明喻",
+        options: ["暗喻", "明喻", "誇張", "擬人"],
+        explanation: "使用「像……一樣」比喻詞將運動員比作箭，屬於【明喻】。"
+      },
+      {
+        id: "P3_G5_Q4",
+        sentence: "假日的圖書館裏，同學們有的在看故事書，有的在查字典，有的在寫閱讀報告。",
+        answer: "排比",
+        options: ["對偶", "排比", "反復", "設問"],
+        explanation: "由三個「有的在……」分句構成整齊的排比結構，屬於【排比】。"
+      },
+      {
+        id: "P3_G5_Q5",
+        sentence: "起風了，起風了，樹上的黃葉紛紛飄落下來。",
+        answer: "反復",
+        options: ["排比", "反復", "擬人", "明喻"],
+        explanation: "連續重複「起風了」以強調秋風吹起的景象，屬於【反復】。"
+      }
+    ]
+  },
+
+  // 第六組（對偶、暗喻、擬人、誇張、設問）
+  {
+    groupTitle: "第六組",
+    questions: [
+      {
+        id: "P3_G6_Q1",
+        sentence: "春風吹綠千條柳，夏雨滋潤萬朵花。",
+        answer: "對偶",
+        options: ["對偶", "排比", "暗喻", "反復"],
+        explanation: "七言對仗，字數相同，詞性相對，屬於【對偶】。"
+      },
+      {
+        id: "P3_G6_Q2",
+        sentence: "太陽是個大火球，在炎熱的夏天散發出耀眼的光芒。",
+        answer: "暗喻",
+        options: ["明喻", "暗喻", "擬人", "設問"],
+        explanation: "喻詞為「是」，本體為太陽，喻體為大火球，屬於【暗喻】。"
+      },
+      {
+        id: "P3_G6_Q3",
+        sentence: "頑皮的秋風輕輕吹口哨，邀請落葉一起在半空中跳舞。",
+        answer: "擬人",
+        options: ["擬人", "誇張", "明喻", "反問"],
+        explanation: "賦予秋風「吹口哨、邀請跳舞」等人的動作，屬於【擬人】。"
+      },
+      {
+        id: "P3_G6_Q4",
+        sentence: "這個西瓜甜得不得了，我才剛咬了一口，連舌頭都快要甜得融化了。",
+        answer: "誇張",
+        options: ["暗喻", "誇張", "擬人", "設問"],
+        explanation: "將西瓜的甜度誇大到「舌頭都快融化」，屬於【誇張】。"
+      },
+      {
+        id: "P3_G6_Q5",
+        sentence: "世界上最偉大的愛是甚麼？那就是父母無微不至的關愛。",
+        answer: "設問",
+        options: ["設問", "反問", "對偶", "排比"],
+        explanation: "先問後答，自問自答，屬於【設問】。"
+      }
+    ]
+  },
+
+  // 第七組（反問、明喻、排比、反復、對偶）
+  {
+    groupTitle: "第七組",
+    questions: [
+      {
+        id: "P3_G7_Q1",
+        sentence: "遇到一點小挫折就輕言放棄，這樣做怎能獲得成功呢？",
+        answer: "反問",
+        options: ["設問", "反問", "誇張", "擬人"],
+        explanation: "答案寓於反問語氣中（這樣做不能獲得成功），屬於【反問】。"
+      },
+      {
+        id: "P3_G7_Q2",
+        sentence: "平靜的湖面像一面大鏡子，清晰地映照著藍天和白雲。",
+        answer: "明喻",
+        options: ["暗喻", "明喻", "對偶", "排比"],
+        explanation: "喻詞為「像」，將湖面比作大鏡子，屬於【明喻】。"
+      },
+      {
+        id: "P3_G7_Q3",
+        sentence: "春天的風是溫暖的，夏天的風是熾熱的，秋天的風是涼爽的。",
+        answer: "排比",
+        options: ["排比", "反復", "對偶", "暗喻"],
+        explanation: "三個句式相同的分句並列，屬於【排比】。"
+      },
+      {
+        id: "P3_G7_Q4",
+        sentence: "下雨了，滴答，滴答，雨水輕輕地落在窗台上。",
+        answer: "反復",
+        options: ["排比", "反復", "擬人", "誇張"],
+        explanation: "重複使用「滴答，滴答」加強節奏與聽覺效果，屬於【反復】。"
+      },
+      {
+        id: "P3_G7_Q5",
+        sentence: "明月松間照，清泉石上流。",
+        answer: "對偶",
+        options: ["對偶", "排比", "暗喻", "明喻"],
+        explanation: "「明月」對「清泉」、「松間」對「石上」、「照」對「流」，對仗工整，屬於【對偶】。"
+      }
+    ]
+  },
+
+  // 第八組（暗喻、擬人、誇張、設問、反問）
+  {
+    groupTitle: "第八組",
+    questions: [
+      {
+        id: "P3_G8_Q1",
+        sentence: "弟弟是我們家裏的開心果，總是逗得大家哈哈大笑。",
+        answer: "暗喻",
+        options: ["明喻", "暗喻", "擬人", "誇張"],
+        explanation: "喻詞為「是」，把弟弟比作開心果，屬於【暗喻】。"
+      },
+      {
+        id: "P3_G8_Q2",
+        sentence: "路邊的花兒在徐徐晚風的撫摸下，安靜地睡著了。",
+        answer: "擬人",
+        options: ["擬人", "誇張", "明喻", "對偶"],
+        explanation: "晚風「撫摸」、花兒「睡著了」皆為人的動作，屬於【擬人】。"
+      },
+      {
+        id: "P3_G8_Q3",
+        sentence: "聽到這個天大的好消息，弟弟高興得一跳就跳上了三層樓高。",
+        answer: "誇張",
+        options: ["暗喻", "誇張", "設問", "反復"],
+        explanation: "跳上三層樓高超乎客觀事實，屬於【誇張】。"
+      },
+      {
+        id: "P3_G8_Q4",
+        sentence: "「只要有恆心，鐵杵磨成針」一句要告訴我們甚麼？就是告訴我們恆心的重要。",
+        answer: "設問",
+        options: ["設問", "反問", "排比", "明喻"],
+        explanation: "明知故問且緊接著自己解答，屬於【設問】。"
+      },
+      {
+        id: "P3_G8_Q5",
+        sentence: "時間一去不復返，我們難道不應該好好珍惜每一分每一秒嗎？",
+        answer: "反問",
+        options: ["設問", "反問", "對偶", "擬人"],
+        explanation: "以反詰形式表達「我們應該珍惜時間」之意，屬於【反問】。"
+      }
+    ]
+  },
+
+  // 第九組（明喻、排比、反復、對偶、暗喻）
+  {
+    groupTitle: "第九組",
+    questions: [
+      {
+        id: "P3_G9_Q1",
+        sentence: "妹妹紅通通的臉蛋，彷彿一個熟透的大蘋果。",
+        answer: "明喻",
+        options: ["明喻", "暗喻", "擬人", "誇張"],
+        explanation: "比喻詞為「彷彿」，把臉蛋比作紅蘋果，屬於【明喻】。"
+      },
+      {
+        id: "P3_G9_Q2",
+        sentence: "下課了，操場上的同學有的在跳繩，有的在踢球，有的在捉迷藏，熱鬧極了。",
+        answer: "排比",
+        options: ["排比", "對偶", "反復", "暗喻"],
+        explanation: "三個結構相似、語氣一致的短句排列，屬於【排比】。"
+      },
+      {
+        id: "P3_G9_Q3",
+        sentence: "成功需要努力，努力，再努力，才能達到理想的目標。",
+        answer: "反復",
+        options: ["排比", "反復", "誇張", "設問"],
+        explanation: "連續重複「努力」一詞以強化勤奮之重要性，屬於【反復】。"
+      },
+      {
+        id: "P3_G9_Q4",
+        sentence: "窗含西嶺千秋雪，門泊東吳萬里船。",
+        answer: "對偶",
+        options: ["對偶", "排比", "明喻", "反問"],
+        explanation: "杜甫名句，字數相等、詞性對仗工整，屬於【對偶】。"
+      },
+      {
+        id: "P3_G9_Q5",
+        sentence: "彎彎的月亮是夜空中的一隻小船。",
+        answer: "暗喻",
+        options: ["明喻", "暗喻", "誇張", "擬人"],
+        explanation: "以「是」作為喻詞將彎彎的月亮比作小船，屬於【暗喻】。"
+      }
+    ]
+  }
+];
+
+const STORAGE_P3_MISTAKES = "p3_rhetoric_mistakes_v3";
+
+let currentMode = "quiz";
+let activeGroupIdx = 0;
+let userSelections = {};
+let submittedGroups = {};
+let mistakeQuizSession = null;
+
+function loadMistakes() {
+  try {
+    const raw = localStorage.getItem(STORAGE_P3_MISTAKES);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveMistakes(list) {
+  localStorage.setItem(STORAGE_P3_MISTAKES, JSON.stringify(list));
+  updateMistakeBadge();
+}
+
+function updateMistakeBadge() {
+  const el = document.getElementById("mistakeBadge");
+  if (el) el.textContent = loadMistakes().length;
+}
+
+function goHome() {
+  currentMode = "quiz";
+  render();
+}
+
+function render() {
+  updateMistakeBadge();
+  const main = document.getElementById("mainView");
+  if (currentMode === "quiz") {
+    renderQuizPaper(main);
+  } else if (currentMode === "mistake_hub") {
+    renderMistakeHub(main);
+  } else if (currentMode === "mistake_quiz") {
+    renderMistakeQuizPaper(main);
+  }
+}
+
+function renderQuizPaper(container) {
+  const grp = P3_DATA_GROUPS[activeGroupIdx];
+  const isSubmitted = !!submittedGroups[activeGroupIdx];
+  const chineseNums = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
+
+  let tabsHtml = "";
+  P3_DATA_GROUPS.forEach((g, idx) => {
+    let cls = "group-tab";
+    if (idx === activeGroupIdx) cls += " active";
+    if (submittedGroups[idx]) cls += " done";
+
+    let scoreTxt = "";
+    if (submittedGroups[idx]) {
+      let c = 0;
+      g.questions.forEach((q, qi) => {
+        if (userSelections[`G${idx}_Q${qi}`] === q.answer) c++;
+      });
+      scoreTxt = ` (${c}/5)`;
+    }
+    tabsHtml += `<button class="${cls}" onclick="switchGroup(${idx})">第${chineseNums[idx]}組${scoreTxt}</button>`;
+  });
+
+  let questionsHtml = "";
+  grp.questions.forEach((q, qIdx) => {
+    const qKey = `G${activeGroupIdx}_Q${qIdx}`;
+    const selectedAns = userSelections[qKey] || "";
+    const letters = ["A", "B", "C", "D"];
+
+    let optionsHtml = "";
+    q.options.forEach((opt, optIdx) => {
+      let optCls = "option-btn";
+      const isPicked = selectedAns === opt;
+
+      if (!isSubmitted) {
+        if (isPicked) optCls += " selected";
+      } else {
+        optCls += " locked";
+        if (opt === q.answer) {
+          optCls += " is-correct";
+        } else if (isPicked && opt !== q.answer) {
+          optCls += " is-wrong-picked";
+        }
+      }
+
+      const clickAttr = isSubmitted ? "" : `onclick="selectOption('${qKey}', '${opt}')"`;
+
+      optionsHtml += `
+        <div class="${optCls}" ${clickAttr}>
+          <span class="circle-radio"></span>
+          <span>${letters[optIdx]}. ${opt}</span>
+        </div>
+      `;
+    });
+
+    let explHtml = "";
+    if (isSubmitted) {
+      const isRight = selectedAns === q.answer;
+      explHtml = `
+        <div class="teacher-explanation ${isRight ? '' : 'wrong-box'}">
+          ${isRight ? '✅ 答對！' : '❌ 答錯！'} <strong>正確答案：${q.answer}</strong>。
+          <br>💡 <strong>教師解析：</strong>${q.explanation}
+        </div>
+      `;
+    }
+
+    questionsHtml += `
+      <div class="question-block">
+        <div class="q-sentence">
+          <span class="q-index">${qIdx + 1}.</span> ${q.sentence}
+        </div>
+        <div class="options-row">
+          ${optionsHtml}
+        </div>
+        ${explHtml}
+      </div>
+    `;
+  });
+
+  let bottomActionHtml = "";
+  if (!isSubmitted) {
+    let answeredCount = 0;
+    grp.questions.forEach((q, qi) => {
+      if (userSelections[`G${activeGroupIdx}_Q${qi}`]) answeredCount++;
+    });
+
+    bottomActionHtml = `
+      <div class="footer-actions">
+        <div style="font-weight:700;color:var(--ink-muted);">
+          本組進度：<strong style="color:var(--accent-blue);">${answeredCount} / 5</strong> 題
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn" onclick="clearGroupAnswers(${activeGroupIdx})">🔄 清空重選</button>
+          <button class="btn btn-primary" onclick="submitGroup(${activeGroupIdx})">
+            ✅ 提交第${chineseNums[activeGroupIdx]}組並批改
+          </button>
+        </div>
+      </div>
+    `;
+  } else {
+    let groupCorrect = 0;
+    grp.questions.forEach((q, qi) => {
+      if (userSelections[`G${activeGroupIdx}_Q${qi}`] === q.answer) groupCorrect++;
+    });
+
+    const nextBtn = activeGroupIdx < 8
+      ? `<button class="btn btn-primary" onclick="switchGroup(${activeGroupIdx + 1})">➡️ 進入第${chineseNums[activeGroupIdx + 1]}組</button>`
+      : `<button class="btn btn-primary" onclick="scrollToFullReport()">📊 查看全卷 45 題總成績</button>`;
+
+    bottomActionHtml = `
+      <div class="group-summary-card">
+        <div class="summary-title">
+          <span>📋 第${chineseNums[activeGroupIdx]}組小結算報告</span>
+          <span style="color:${groupCorrect === 5 ? 'var(--correct-green)' : 'var(--accent-blue)'}">
+            本組得分：${groupCorrect} / 5 題 (${groupCorrect * 20}分)
+          </span>
+        </div>
+        <p style="font-size:0.95rem;color:var(--ink-muted);margin-bottom:14px;">
+          ${groupCorrect === 5 ? "太棒了！本組 5 條修辭題目全對！" : `本組有 ${5 - groupCorrect} 題答錯，已自動記入「錯題溫習專區」，請仔細閱讀上方綠色解析。`}
+        </p>
+        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <button class="btn" onclick="retryGroup(${activeGroupIdx})">🔁 重做本組 5 題</button>
+          ${nextBtn}
+        </div>
+      </div>
+    `;
+  }
+
+  let fullExamReportHtml = "";
+  const allFinished = P3_DATA_GROUPS.every((g, idx) => submittedGroups[idx]);
+  if (allFinished) {
+    let grandTotal = 0;
+    P3_DATA_GROUPS.forEach((g, gIdx) => {
+      g.questions.forEach((q, qi) => {
+        if (userSelections[`G${gIdx}_Q${qi}`] === q.answer) grandTotal++;
+      });
+    });
+    const finalScore = Math.round((grandTotal / 45) * 100);
+
+    fullExamReportHtml = `
+      <div id="fullReportSection" class="group-summary-card" style="margin-top:24px;border:3px solid var(--accent-blue);background:#eff6ff;">
+        <div class="summary-title">
+          <span>🏆 小三修辭練習 — 全卷 45 題總成績報告</span>
+          <span style="font-size:1.45rem;color:var(--accent-blue);">${grandTotal} / 45 題 (${finalScore}分)</span>
+        </div>
+        <p style="font-size:1rem;margin:12px 0;">
+          ${finalScore >= 90 ? "🌟 表現優異！你已經熟練掌握小三所有必考修辭手法！" : "溫馨提示：請點擊下方「錯題溫習」，針對答錯的題目進行強化練習。"}
+        </p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <button class="btn btn-danger" onclick="openMistakeCenter()">📕 進入錯題溫習</button>
+          <button class="btn" onclick="resetAllQuiz()">🔄 重新作答全卷 45 題</button>
+        </div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = `
+    <div class="exam-paper">
+      <div class="school-header">
+        <div class="quiz-title">小三中文科修辭練習</div>
+      </div>
+
+      <div class="exam-section-title">
+        修辭辨析：判斷下列各句的修辭手法，並把正確選項前的圓圈塗黑及塗滿。（全卷共 9 組，每組 5 題）
+      </div>
+
+      <div class="group-tabs">
+        ${tabsHtml}
+      </div>
+
+      <div>
+        ${questionsHtml}
+      </div>
+
+      ${bottomActionHtml}
+      ${fullExamReportHtml}
+    </div>
+  `;
+}
+
+function selectOption(qKey, opt) {
+  userSelections[qKey] = opt;
+  render();
+}
+
+function switchGroup(idx) {
+  activeGroupIdx = idx;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  render();
+}
+
+function clearGroupAnswers(gIdx) {
+  P3_DATA_GROUPS[gIdx].questions.forEach((q, qi) => {
+    delete userSelections[`G${gIdx}_Q${qi}`];
+  });
+  render();
+}
+
+function retryGroup(gIdx) {
+  delete submittedGroups[gIdx];
+  clearGroupAnswers(gIdx);
+}
+
+function submitGroup(gIdx) {
+  const grp = P3_DATA_GROUPS[gIdx];
+  let unDone = 0;
+  grp.questions.forEach((q, qi) => {
+    if (!userSelections[`G${gIdx}_Q${qi}`]) unDone++;
+  });
+
+  if (unDone > 0) {
+    if (!confirm(`本組尚有 ${unDone} 題未填選，確定要現在提交並批改嗎？`)) return;
+  }
+
+  submittedGroups[gIdx] = true;
+
+  const mistakes = loadMistakes();
+  const mistakeMap = new Map(mistakes.map(m => [m.id, m]));
+
+  grp.questions.forEach((q, qi) => {
+    const userAns = userSelections[`G${gIdx}_Q${qi}`] || "（未作答）";
+    if (userAns !== q.answer) {
+      mistakeMap.set(q.id, {
+        id: q.id,
+        sentence: q.sentence,
+        answer: q.answer,
+        userAns: userAns,
+        options: q.options,
+        explanation: q.explanation,
+        groupTitle: grp.groupTitle,
+        timestamp: Date.now()
+      });
+    }
+  });
+
+  saveMistakes(Array.from(mistakeMap.values()));
+  render();
+}
+
+function scrollToFullReport() {
+  const el = document.getElementById("fullReportSection");
+  if (el) el.scrollIntoView({ behavior: "smooth" });
+}
+
+function resetAllQuiz() {
+  if (!confirm("確定要重設全卷所有答案並重新開始嗎？")) return;
+  userSelections = {};
+  submittedGroups = {};
+  activeGroupIdx = 0;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  render();
+}
+
+function openMistakeCenter() {
+  currentMode = "mistake_hub";
+  render();
+}
+
+function renderMistakeHub(container) {
+  const mistakes = loadMistakes();
+
+  if (mistakes.length === 0) {
+    container.innerHTML = `
+      <div class="exam-paper" style="text-align:center;padding:48px 24px;">
+        <h2 style="font-size:1.5rem;margin-bottom:12px;">🎉 恭喜！目前沒有任何做錯的題目！</h2>
+        <p style="color:var(--ink-muted);margin-bottom:24px;">
+          你在 9 個小組測驗中答錯的題目會自動保存在這裡，方便考前單獨重溫。
+        </p>
+        <button class="btn btn-primary" onclick="goHome()">🏠 返回練習目錄</button>
+      </div>
+    `;
+    return;
+  }
+
+  let listHtml = "";
+  mistakes.forEach((m, idx) => {
+    listHtml += `
+      <div class="mistake-item">
+        <div class="mistake-sentence">${idx + 1}. ${m.sentence}</div>
+        <div class="mistake-tag">
+          來源：${m.groupTitle} ｜ 上次誤選：<span style="color:var(--wrong-red);text-decoration:line-through;">${m.userAns}</span>
+        </div>
+        <div class="teacher-explanation" style="margin-top:8px;">
+          ✅ <strong>正確修辭手法：${m.answer}</strong><br>
+          💡 <strong>解析：</strong>${m.explanation}
+        </div>
+        <div style="margin-top:10px;text-align:right;">
+          <button class="btn" onclick="removeMistake('${m.id}')">✅ 我已熟練掌握，移出錯題簿</button>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = `
+    <div class="exam-paper">
+      <div class="school-header">
+        <div class="quiz-title">小三中文科修辭練習 — 📕 錯題溫習專區</div>
+        <div style="margin-top:8px;font-weight:700;color:var(--wrong-red);">
+          目前累積錯題：${mistakes.length} 題
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px;">
+        <button class="btn btn-primary" onclick="startMistakeRetest()">
+          ✍️ 啟動「錯題重測」（只考這 ${mistakes.length} 題）
+        </button>
+        <button class="btn btn-danger" onclick="clearAllMistakes()">
+          🗑️ 清空所有錯題記錄
+        </button>
+      </div>
+
+      <div>
+        ${listHtml}
+      </div>
+    </div>
+  `;
+}
+
+function removeMistake(id) {
+  const filtered = loadMistakes().filter(m => m.id !== id);
+  saveMistakes(filtered);
+  render();
+}
+
+function clearAllMistakes() {
+  if (!confirm("確定要清空所有錯題記錄嗎？")) return;
+  saveMistakes([]);
+  render();
+}
+
+function startMistakeRetest() {
+  const mistakes = loadMistakes();
+  if (mistakes.length === 0) return;
+
+  mistakeQuizSession = {
+    questions: mistakes,
+    userAnswers: {},
+    submitted: false
+  };
+  currentMode = "mistake_quiz";
+  render();
+}
+
+function renderMistakeQuizPaper(container) {
+  const sess = mistakeQuizSession;
+  const isSubmitted = sess.submitted;
+  const letters = ["A", "B", "C", "D"];
+
+  let questionsHtml = "";
+  sess.questions.forEach((q, qIdx) => {
+    const selectedAns = sess.userAnswers[q.id] || "";
+    let optionsHtml = "";
+
+    q.options.forEach((opt, optIdx) => {
+      let optCls = "option-btn";
+      const isPicked = selectedAns === opt;
+
+      if (!isSubmitted) {
+        if (isPicked) optCls += " selected";
+      } else {
+        optCls += " locked";
+        if (opt === q.answer) {
+          optCls += " is-correct";
+        } else if (isPicked && opt !== q.answer) {
+          optCls += " is-wrong-picked";
+        }
+      }
+
+      const clickAttr = isSubmitted ? "" : `onclick="selectMistakeOption('${q.id}', '${opt}')"`;
+      optionsHtml += `
+        <div class="${optCls}" ${clickAttr}>
+          <span class="circle-radio"></span>
+          <span>${letters[optIdx]}. ${opt}</span>
+        </div>
+      `;
+    });
+
+    let explHtml = "";
+    if (isSubmitted) {
+      const isRight = selectedAns === q.answer;
+      explHtml = `
+        <div class="teacher-explanation ${isRight ? '' : 'wrong-box'}">
+          ${isRight ? '✅ 答對！' : '❌ 答錯！'} <strong>正確修辭：${q.answer}</strong>。
+          <br>💡 ${q.explanation}
+        </div>
+      `;
+    }
+
+    questionsHtml += `
+      <div class="question-block">
+        <div class="q-sentence"><span class="q-index">${qIdx + 1}.</span> ${q.sentence}</div>
+        <div class="options-row">${optionsHtml}</div>
+        ${explHtml}
+      </div>
+    `;
+  });
+
+  let bottomHtml = "";
+  if (!isSubmitted) {
+    bottomHtml = `
+      <div class="footer-actions">
+        <button class="btn" onclick="openMistakeCenter()">⬅️ 返回錯題列表</button>
+        <button class="btn btn-primary" onclick="submitMistakeRetest()">✅ 提交錯題重測批改</button>
+      </div>
+    `;
+  } else {
+    let correctCount = 0;
+    const correctIds = [];
+    sess.questions.forEach(q => {
+      if (sess.userAnswers[q.id] === q.answer) {
+        correctCount++;
+        correctIds.push(q.id);
+      }
+    });
+
+    bottomHtml = `
+      <div class="group-summary-card">
+        <div class="summary-title">
+          <span>📋 錯題重測結果：答對 ${correctCount} / ${sess.questions.length} 題</span>
+        </div>
+        <p style="font-size:0.95rem;color:var(--ink-muted);margin-bottom:14px;">
+          恭喜你答對了 ${correctCount} 題！點擊下方按鈕可將本次答對的題目自動移出錯題簿。
+        </p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          ${correctCount > 0 ? `<button class="btn btn-primary" onclick="removeBatchMistakes(${JSON.stringify(correctIds).replace(/"/g, '&quot;')})">🌟 將本次答對的 ${correctCount} 題移出錯題簿</button>` : ''}
+          <button class="btn" onclick="openMistakeCenter()">📕 返回錯題專區</button>
+        </div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = `
+    <div class="exam-paper">
+      <div class="school-header">
+        <div class="quiz-title">小三中文科修辭練習 — 📕 錯題專項重測卷（共 ${sess.questions.length} 題）</div>
+      </div>
+      <div>${questionsHtml}</div>
+      ${bottomHtml}
+    </div>
+  `;
+}
+
+function selectMistakeOption(qId, opt) {
+  mistakeQuizSession.userAnswers[qId] = opt;
+  render();
+}
+
+function submitMistakeRetest() {
+  mistakeQuizSession.submitted = true;
+  render();
+}
+
+function removeBatchMistakes(idList) {
+  const idSet = new Set(idList);
+  const remaining = loadMistakes().filter(m => !idSet.has(m.id));
+  saveMistakes(remaining);
+  openMistakeCenter();
+}
+
+render();
+</script>
+</body>
+</html>
