@@ -1,0 +1,2123 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P5 中文科考前溫習：供詞填充特訓系統（教師審訂版）</title>
+<style>
+  :root {
+    --paper-bg: #fcfaf5;
+    --ink: #1e242b;
+    --ink-muted: #5a626a;
+    --border-strong: #1e242b;
+    --accent-primary: #1d4ed8;
+    --accent-hover: #1e40af;
+    --correct-green: #15803d;
+    --correct-bg: #dcfce7;
+    --wrong-red: #b91c1c;
+    --wrong-bg: #fee2e2;
+    --selected-bg: #dbeafe;
+    --selected-border: #2563eb;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: "PingFang HK", "Microsoft JhengHei", "Heiti TC", "Kaiti TC", serif;
+    background-color: #e5e2dc;
+    color: var(--ink);
+    line-height: 1.65;
+    padding: 16px;
+  }
+
+  .app-shell {
+    max-width: 920px;
+    margin: 0 auto;
+  }
+
+  /* 頂部控制列 */
+  .top-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    background: #ffffff;
+    padding: 12px 18px;
+    border-radius: 8px;
+    border: 2px solid var(--border-strong);
+    margin-bottom: 16px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.06);
+  }
+
+  .brand-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .teacher-badge {
+    font-size: 0.78rem;
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #f59e0b;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-weight: 700;
+  }
+
+  .nav-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .btn {
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: 2px solid var(--border-strong);
+    background: #fff;
+    color: var(--ink);
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn:hover:not(:disabled) {
+    background: #f1f5f9;
+    transform: translateY(-1px);
+  }
+
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    background: var(--accent-primary);
+    color: #fff;
+    border-color: var(--accent-primary);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: var(--accent-hover);
+  }
+
+  .btn-danger {
+    background: var(--wrong-bg);
+    color: var(--wrong-red);
+    border-color: var(--wrong-red);
+  }
+
+  .btn-danger:hover:not(:disabled) {
+    background: #fecaca;
+  }
+
+  /* 模擬香港小學試卷紙張 */
+  .exam-paper {
+    background: var(--paper-bg);
+    border: 2px solid var(--border-strong);
+    padding: 28px 32px;
+    border-radius: 4px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    position: relative;
+  }
+
+  .exam-header {
+    border-bottom: 2px solid var(--border-strong);
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+  }
+
+  .exam-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .exam-code {
+    font-size: 1.35rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+  }
+
+  .student-meta {
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: flex;
+    gap: 18px;
+  }
+
+  .meta-line {
+    border-bottom: 1px solid var(--border-strong);
+    display: inline-block;
+    min-width: 90px;
+    text-align: center;
+    padding: 0 6px;
+  }
+
+  .exam-scope {
+    font-size: 1.05rem;
+    font-weight: 800;
+    padding-top: 4px;
+  }
+
+  .exam-instruction {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 14px 0;
+    line-height: 1.5;
+  }
+
+  /* 分組進度導航列 */
+  .group-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed #94a3b8;
+  }
+
+  .group-tab {
+    padding: 6px 12px;
+    border: 1.5px solid var(--border-strong);
+    background: #fff;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .group-tab.active {
+    background: var(--ink);
+    color: #fff;
+  }
+
+  .group-tab.done {
+    border-color: var(--correct-green);
+    background: var(--correct-bg);
+    color: var(--correct-green);
+  }
+
+  .group-tab.done.active {
+    background: var(--correct-green);
+    color: #fff;
+  }
+
+  /* 仿試卷黑框雙行供詞表 */
+  .word-bank-wrapper {
+    position: sticky;
+    top: 8px;
+    z-index: 20;
+    background: var(--paper-bg);
+    padding: 6px 0 10px 0;
+  }
+
+  .section-label {
+    font-size: 1.1rem;
+    font-weight: 900;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .helper-tip {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent-primary);
+  }
+
+  .word-bank-box {
+    border: 2.5px solid var(--border-strong);
+    background: #ffffff;
+    padding: 12px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .word-chip {
+    padding: 8px 4px;
+    font-size: 1.12rem;
+    font-weight: 800;
+    border: 1.5px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.12s ease;
+    background: #f8fafc;
+  }
+
+  .word-chip:hover:not(.used) {
+    border-color: var(--accent-primary);
+    background: #eff6ff;
+  }
+
+  .word-chip.selected {
+    background: var(--selected-bg);
+    border-color: var(--selected-border);
+    color: var(--accent-primary);
+    box-shadow: 0 0 0 2px rgba(37,99,235,0.25);
+    transform: scale(1.03);
+  }
+
+  .word-chip.used {
+    color: #94a3b8;
+    text-decoration: line-through;
+    background: #f1f5f9;
+    font-weight: 600;
+  }
+
+  /* 題目列表 */
+  .questions-list {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .question-row {
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.95;
+    padding: 10px 14px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.65);
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .q-num {
+    font-weight: 900;
+    min-width: 28px;
+    flex-shrink: 0;
+  }
+
+  .q-content {
+    flex: 1;
+  }
+
+  /* 填充橫線按鈕 */
+  .blank-slot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 135px;
+    padding: 0 12px;
+    margin: 0 4px;
+    border-bottom: 2px solid var(--border-strong);
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: var(--accent-primary);
+    cursor: pointer;
+    min-height: 34px;
+    vertical-align: baseline;
+    transition: all 0.15s ease;
+    background: rgba(255,255,255,0.8);
+  }
+
+  .blank-slot:hover {
+    background: #eff6ff;
+  }
+
+  .blank-slot.active-target {
+    background: var(--selected-bg);
+    border-bottom: 3px solid var(--selected-border);
+    box-shadow: 0 2px 0 rgba(37,99,235,0.2);
+  }
+
+  .blank-slot.filled {
+    color: #0f172a;
+    background: #f8fafc;
+  }
+
+  .blank-slot.correct {
+    color: var(--correct-green);
+    border-bottom-color: var(--correct-green);
+    background: var(--correct-bg);
+  }
+
+  .blank-slot.wrong {
+    color: var(--wrong-red);
+    border-bottom-color: var(--wrong-red);
+    background: var(--wrong-bg);
+    text-decoration: line-through;
+  }
+
+  .correction-tag {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 10px;
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--correct-green);
+    background: var(--correct-bg);
+    border: 1px solid var(--correct-green);
+    border-radius: 4px;
+  }
+
+  /* 小結算面板 */
+  .group-summary-card {
+    margin-top: 24px;
+    padding: 20px;
+    border: 2px solid var(--border-strong);
+    background: #ffffff;
+    border-radius: 8px;
+  }
+
+  .summary-title {
+    font-size: 1.25rem;
+    font-weight: 900;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* 主頁選單卡片 */
+  .home-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 18px;
+  }
+
+  .practice-card {
+    background: #ffffff;
+    border: 2px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 14px;
+    transition: transform 0.15s ease;
+  }
+
+  .practice-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .card-title {
+    font-size: 1.3rem;
+    font-weight: 900;
+  }
+
+  .card-meta {
+    font-size: 0.92rem;
+    color: var(--ink-muted);
+    font-weight: 600;
+  }
+
+  .badge-score {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    background: #f1f5f9;
+  }
+
+  /* 錯題列表樣式 */
+  .mistake-item {
+    background: #fff;
+    border: 1.5px solid #cbd5e1;
+    border-left: 5px solid var(--wrong-red);
+    padding: 14px 16px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .footer-bar {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 2px solid var(--border-strong);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  @media (max-width: 680px) {
+    .exam-paper {
+      padding: 16px 14px;
+    }
+    .word-bank-box {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 8px;
+    }
+    .word-chip {
+      font-size: 1rem;
+      padding: 6px 2px;
+    }
+    .question-row {
+      font-size: 1.05rem;
+      padding: 8px 10px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <!-- 頂部導航列 -->
+  <header class="top-nav">
+    <div class="brand-title">
+      <span>📖 小五中文科：供詞填充考前溫習系統</span>
+      <span class="teacher-badge">資深教師審訂題庫 (360題)</span>
+    </div>
+    <div class="nav-actions">
+      <button class="btn" onclick="goHome()">🏠 練習目錄</button>
+      <button class="btn btn-danger" onclick="openMistakeCenter()" id="navMistakeBtn">
+        📕 錯題溫習 (<span id="mistakeCountBadge">0</span>)
+      </button>
+    </div>
+  </header>
+
+  <!-- 動態內容容器 -->
+  <main id="mainView"></main>
+</div>
+
+<script>
+/**
+ * 資深小五中文科教師審訂版題庫
+ * 72 個詞語分為 6 個固定小組（每組 12 個詞語），特意將近義詞分隔於不同組別，杜絕同組答案混淆。
+ * 每個詞語配有 5 條獨立且語境嚴謹的句子（共 360 題，對應練習一至練習五）。
+ */
+const VOCAB_GROUPS = [
+  // 第一組（第 1 - 12 詞）
+  [
+    {
+      word: "生動",
+      s: [
+        "陳老師用____有趣的肢體動作演繹課文角色，逗得全班同學哈哈大笑。",
+        "這本兒童小說的人物描寫十分____，每個角色的性格都躍然紙上。",
+        "紀錄片透過____的真實畫面，向觀眾展示了企鵝在南極生活的點滴。",
+        "哥哥講故事時表情豐富、語調____，把弟弟妹妹吸引得目不轉睛。",
+        "畫家只用了幾筆簡單的墨線，便把小貓撲蝶的姿態勾勒得異常____。"
+      ]
+    },
+    {
+      word: "興趣",
+      s: [
+        "自從參觀了太空館後，志明對天文學產生了濃厚的____。",
+        "父母應該尊重子女的個人意願，讓他們自由發展有益身心的課餘____。",
+        "這場科學實驗講座成功激發了同學們探索自然奧秘的____。",
+        "妹妹對彈奏鋼琴毫無____，反而最喜歡到球場上踢足球。",
+        "廣泛閱讀不同類型的課外書，有助我們培養多方面的學習____。"
+      ]
+    },
+    {
+      word: "邀請",
+      s: [
+        "下星期日是我的十歲生日，我誠意____了幾位好朋友到家裏舉行派對。",
+        "學校特意____了一位著名的兒童文學作家，在下周三到禮堂主持閱讀講座。",
+        "收到表姐寄來的婚禮____卡後，我們一家人都感到十分高興。",
+        "班長熱情地____新來的插班生一起到操場參加籃球比賽。",
+        "社區中心主動____區內的長者參加中秋節聯歡晚會，共度佳節。"
+      ]
+    },
+    {
+      word: "手勢",
+      s: [
+        "交通警員站在馬路中央，以清晰的____指揮往來的車輛安全前行。",
+        "合唱團的團員都緊盯着指揮家的____，整齊地唱出優美的旋律。",
+        "由於現場環境太嘈雜，爸爸惟有做了一個「離開」的____，示意我們先到門外等候。",
+        "裁判吹響哨子，並做出暫停比賽的____，讓受傷的球員接受治療。",
+        "聾啞人士主要依靠靈活的手語____來與別人溝通和表達心意。"
+      ]
+    },
+    {
+      word: "下陷",
+      s: [
+        "連日暴雨沖刷地底泥沙，導致這段行人路出現嚴重的地基____。",
+        "這張舊沙發的彈簧已經損壞，人一坐上去中間便會深深地____。",
+        "探險隊員不小心踏進了沼澤，雙腳立刻往軟泥裏____，情況十分危急。",
+        "工人及時修補了路面____的坑洞，避免途人經過時絆倒受傷。",
+        "由於過度抽取地下水，這座沿海城市的地面正逐年緩慢地____。"
+      ]
+    },
+    {
+      word: "戳穿",
+      s: [
+        "弟弟調皮地用鉛筆尖把紙盒____了一個小孔，偷看裏面的小昆蟲。",
+        "魔術師的秘密手法被眼利的觀眾當場____，頓時感到十分尷尬。",
+        "為了不讓祖母擔心，大家很有默契地沒有____這個善意的謊言。",
+        "小心不要讓尖銳的樹枝____吹氣帳篷，否則帳篷很快便會漏氣。",
+        "不管騙徒如何巧言令色，最終還是被精明的警察一語____了他的騙局。"
+      ]
+    },
+    {
+      word: "作用",
+      s: [
+        "森林就像地球的肺部，在調節氣候和淨化空氣方面發揮着重要的____。",
+        "老師提醒我們，光靠死記硬背而不去理解，對提升寫作能力是毫無____的。",
+        "這種新研發的退燒藥很快便起了____，妹妹的體溫終於回落正常。",
+        "眼睫毛具有阻擋灰塵和汗水流入眼睛的保護____。",
+        "在團隊合作中，每位隊員都扮演着不可或缺的角色，各有各的____。"
+      ]
+    },
+    {
+      word: "腐爛",
+      s: [
+        "如果忘記把新鮮水果放進雪櫃冷藏，在炎熱的天氣下不出兩天便會發霉____。",
+        "秋天落下的枯葉在泥土裏慢慢____，最終變成了滋養大樹的天然肥料。",
+        "媽媽定期清理廚餘，以免食物殘渣在垃圾桶內____並發出陣陣惡臭。",
+        "這根木柱長期泡在潮濕的泥水裏，底部已經完全____，無法再支撐屋頂。",
+        "古埃及人懂得製作木乃伊，防止死者的遺體隨時間而____。"
+      ]
+    },
+    {
+      word: "持之以恆",
+      s: [
+        "學習外語沒有捷徑，只有____地每天朗讀和背誦，才能打好穩固的根基。",
+        "爺爺每天清晨都會到公園耍太極，數十年來____，從未間斷。",
+        "無論做任何事情，如果半途而廢必定一事無成，唯有____才能邁向成功。",
+        "表哥憑着____的刻苦練習，終於在全港學界游泳比賽中奪得金牌。",
+        "寫日記是一個很好的習慣，只要你____地寫下去，文筆定會大有進步。"
+      ]
+    },
+    {
+      word: "雕琢",
+      s: [
+        "經驗豐富的玉石工匠花了整整三個月，才把這塊粗糙的石頭____成精美的玉觀音。",
+        "俗語說「玉不琢，不成器」，再好的美玉也需要經過細心____才能發出光芒。",
+        "這件象牙工藝品上的花紋經過名師巧手____，每一處細節都栩栩如生。",
+        "冰雕師傅在嚴寒中拿着工具悉心____，把巨大的冰塊變成晶瑩剔透的城堡。",
+        "作家反覆修改手稿，字斟句酌地____每一個句子，力求文章完美無瑕。"
+      ]
+    },
+    {
+      word: "要訣",
+      s: [
+        "廚師大方地公開了烤製酥脆曲奇餅的成功____，就是牛油的溫度必須適中。",
+        "教練指出，在長跑比賽中取勝的____在於合理分配體力和保持呼吸平穩。",
+        "掌握了「多聽、多講、多讀」這三個學習____，你的普通話一定會說得更流利。",
+        "書法老師告訴我們，寫好毛筆字的首要____是坐姿端正和握筆穩健。",
+        "叔叔向我傳授了種植蘭花的____，讓我盆栽裏的花朵開得格外茂盛。"
+      ]
+    },
+    {
+      word: "喜悅",
+      s: [
+        "當校長宣佈我們班奪得合唱比賽冠軍時，同學們的臉上都洋溢着勝利的____。",
+        "農夫看着田裏金黃飽滿的稻穗，內心充滿了豐收的____。",
+        "家俊第一時間打電話給媽媽，與她分享自己考獲全級第一名的____。",
+        "義工們把親手編織的毛衣送到長者手中，大家都感受到助人為樂的____。",
+        "隨着農曆新年的臨近，大街小巷都張燈結綵，到處彌漫着節日的____氣氛。"
+      ]
+    }
+  ],
+
+  // 第二組（第 13 - 24 詞）
+  [
+    {
+      word: "笨拙",
+      s: [
+        "小企鵝在冰面上搖搖擺擺地走路，模樣看似____，但游起水來卻敏捷得很。",
+        "弟弟第一次使用剪刀做勞作，手指顯得十分____，剪出來的紙條歪歪斜斜的。",
+        "大熊貓挺着圓滾滾的肚子，邁着____的步伐慢吞吞地爬上木架。",
+        "雖然小狗剛學會接飛盤時動作有些____，但經過訓練後已變得十分靈巧。",
+        "爸爸不擅長縫補衣服，他拿着細小的針線時動作相當____，引得媽媽發笑。"
+      ]
+    },
+    {
+      word: "四腳朝天",
+      s: [
+        "小烏龜從石頭上翻了下來，摔得____，拼命揮動四肢也翻不過身來。",
+        "地面上有一灘肥皂水，弟弟沒留神跑過去，結果滑了一跤，跌了個____。",
+        "兩隻小狗在草地上追逐打鬧，其中一隻不小心絆倒，滾在地上____。",
+        "甲蟲被大風吹翻在窗台上，____地掙扎了好一會兒，才重新翻過身爬走。",
+        "頑皮的小花貓躺在地板上____，露出軟綿綿的白肚皮讓主人撫摸。"
+      ]
+    },
+    {
+      word: "戰戰兢兢",
+      s: [
+        "妹妹雙手捧着滿滿一碗熱湯，____地走出廚房，生怕把熱湯灑在地上。",
+        "第一次走在高空玻璃吊橋上，看著腳下萬丈深淵，我嚇得____，不敢往前邁步。",
+        "他自知打碎了爸爸最心愛的古董花瓶，站在書房門外____地等待責罰。",
+        "雜技演員在幼細的鋼線上____地保持平衡，台下觀眾都為他捏一把汗。",
+        "小志沒有溫習便去參加口試，面對考官的提問，他全程____，答得結結巴巴。"
+      ]
+    },
+    {
+      word: "膽怯",
+      s: [
+        "面對台下數百名觀眾，向來害羞的小敏不禁感到一陣____，雙手微微發抖。",
+        "只要我們在賽前做好充足準備，上到比賽場地時自然不會感到____。",
+        "這隻流浪小貓似乎曾受過驚嚇，眼神裏總是流露出____與不安。",
+        "在老師溫暖的目光鼓勵下，他終於克服了內心的____，勇敢地舉手發言。",
+        "弟弟在黑暗的房間裏顯得十分____，緊緊抓着媽媽的衣角不肯放手。"
+      ]
+    },
+    {
+      word: "頻繁",
+      s: [
+        "每逢農曆新年前夕，往來中港兩地的旅客和貨車都會變得格外____。",
+        "近月這座活火山的地殼活動相當____，專家警告隨時有爆發的危險。",
+        "自從表哥移居英國讀書後，我們仍透過視像電話保持____的聯絡。",
+        "在繁忙時間，地鐵列車的班次十分____，平均每兩分鐘便有一班車到站。",
+        "最近天氣反覆無常，冷暖氣團交替____，大家要特別注意添衣保暖。"
+      ]
+    },
+    {
+      word: "邁步",
+      s: [
+        "運動員聽見發令槍響，立刻大踏步地往前____，朝着終點全力衝刺。",
+        "正當我準備____走過斑馬線時，行人交通燈突然轉為紅燈，我只好停下腳步。",
+        "經過一番心理掙扎，小華終於鼓起勇氣____走上舞台，開始他的演講。",
+        "雖然山路崎嶇難行，但登山隊員依然堅定地向上____，絕不輕言放棄。",
+        "剛滿一歲的表妹放開媽媽的手，搖搖晃晃地向前____，成功走出了人生第一步。"
+      ]
+    },
+    {
+      word: "東歪西倒",
+      s: [
+        "十號颶風吹襲過後，路旁的樹木被吹得____，街上一片狼藉。",
+        "書架上的圖書沒有擺放整齊，有些更____地疊在一起，十分不雅觀。",
+        "他剛學會踩單車，車頭總是控制不穩，在空地上騎得____。",
+        "院子裏的竹籬笆日久失修，幾根竹子已經鬆脫，____地靠在牆邊。",
+        "剛出生不久的小馬還未站穩，搖搖晃晃、____的模樣惹人憐愛。"
+      ]
+    },
+    {
+      word: "張皇失措",
+      s: [
+        "面對突如其來的火警鐘聲，同學們在老師指揮下冷靜疏散，沒有半點____。",
+        "弟弟在商場裏與媽媽走散了，嚇得站在原地大哭，顯得____。",
+        "遇到緊急事故時，我們必須保持鎮定，如果____只會把事情弄得更糟。",
+        "小偷在屋內搜掠時，突然聽見門外傳來警車聲，頓時嚇得____，不知所措。",
+        "第一次擔任大會司儀的她忘記了台詞，在台上顯得____，臉都紅透了。"
+      ]
+    },
+    {
+      word: "無動於衷",
+      s: [
+        "看見老伯伯在巴士上提着重物站不穩，他竟然只顧低頭玩手機，完全____。",
+        "無論妹妹怎樣苦苦哀求，哥哥依然____，不肯把心愛的模型借給她玩。",
+        "面對大自然發出的環境污染警號，人類絕不能再麻木不仁、____了。",
+        "儘管媽媽已經多次嚴厲勸告他要早睡早起，他卻始終____，依然故我。",
+        "看到紀錄片裏受災兒童挨餓的畫面，沒有人能夠鐵石心腸地____。"
+      ]
+    },
+    {
+      word: "無可奈何",
+      s: [
+        "原本計劃好的郊遊因為一場傾盆大雨而被迫取消，大家也感到____。",
+        "由於最後一班渡輪已經開出，滯留碼頭的遊客只好____地改乘的士離開。",
+        "面對弟弟連串天馬行空的古怪問題，博學的爸爸也搖搖頭，顯得____。",
+        "門票早在半小時前已經全部售罄，遲來的觀眾只能____地嘆氣離去。",
+        "看着被小狗咬爛的新球鞋，哥哥既生氣又____，只好自己動手清理。"
+      ]
+    },
+    {
+      word: "啟示",
+      s: [
+        "這則《龜兔賽跑》的寓言故事，給了我們「驕兵必敗」的深刻____。",
+        "科學家從鳥類飛翔的姿態中得到____，進而發明了早期的滑翔機。",
+        "魯班被草葉邊緣的小細齒割傷手指，從中獲得____，發明了實用的鋸子。",
+        "這次比賽失利的經歷，給了籃球隊員很大的____，讓他們明白團隊合作的重要。",
+        "讀完這本名人傳記後，我從主角克服逆境的經歷中得到了不少人生____。"
+      ]
+    },
+    {
+      word: "獲益良多",
+      s: [
+        "聽完消防員叔叔講解家居防火安全的講座後，全校師生都感到____。",
+        "這次到濕地公園進行實地考察，讓我認識了多種候鳥的習性，真是____。",
+        "只要你用心細讀這本寫作指導叢書，相信在修辭和佈局方面定會____。",
+        "參加了為期三天的童軍露營訓練後，同學們學會了野外求生技能，全都____。",
+        "與這位經驗豐富的長輩交談了一整個下午，他的人生智慧令我____。"
+      ]
+    }
+  ],
+
+  // 第三組（第 25 - 36 詞）
+  [
+    {
+      word: "興致勃勃",
+      s: [
+        "秋季旅行的前一晚，妹妹____地把零食和水壺逐一放進背囊裏。",
+        "同學們圍在科學實驗桌旁，____地觀察蠶蟲吐絲結繭的奇妙過程。",
+        "一聽到周末要去海洋公園看海豚表演，弟弟便____地手舞足蹈起來。",
+        "中秋節晚上，我們一家人提着燈籠，____地到維多利亞公園賞月。",
+        "美術課上，大家都拿起畫筆，____地設計獨一無二的環保購物袋。"
+      ]
+    },
+    {
+      word: "此起彼伏",
+      s: [
+        "陸運會的看台上，各社啦啦隊的吶喊助威聲____，響徹整個運動場。",
+        "夏夜的池塘邊，青蛙的鳴叫聲____，就像在演奏一首熱鬧的交響樂。",
+        "表演結束後，禮堂內響起了____的熱烈掌聲，久久沒有停息。",
+        "清晨的樹林裏，小鳥清脆的歌聲____，喚醒了沉睡的大地。",
+        "拍賣會現場氣氛高漲，買家們舉牌競投的叫價聲____。"
+      ]
+    },
+    {
+      word: "指定",
+      s: [
+        "所有參賽者必須在上午九時前，到達大會____的集合地點報到。",
+        "老師要求我們在閱讀報告中，從____的五本圖書裏挑選其中一本撰寫感想。",
+        "為了確保安全，泳客必須在救生員當值的____浮波範圍內游泳。",
+        "在垃圾徵費實施後，市民需要使用政府____的垃圾袋來棄置家居廢物。",
+        "速遞員按照客戶____的時間和地址，準時把鮮花送到收件人手上。"
+      ]
+    },
+    {
+      word: "認真",
+      s: [
+        "志華做功課的態度一向十分____，每個字都寫得端正工整，從不馬虎。",
+        "值日生在放學後____地擦拭黑板和擺放桌椅，把課室打掃得一塵不染。",
+        "只要你上課時____聽講，回家後溫故知新，考試自然能取得理想成績。",
+        "醫生拿起聽診器，十分____地為病人檢查心肺功能，絲毫不敢大意。",
+        "面對班長的批評，他不但沒有發脾氣，反而____地反省自己的過失。"
+      ]
+    },
+    {
+      word: "拍攝",
+      s: [
+        "攝影師潛入深海，成功____到珊瑚礁魚群覓食的珍貴片段。",
+        "畢業典禮結束後，全班同學和班主任一起站在禮堂台前____大合照。",
+        "為了____日出時雲海變幻的美景，叔叔清晨四時便背着相機登上山頂。",
+        "這部介紹中國名勝古蹟的紀錄片，花了整整三年時間才完成實地____。",
+        "在博物館的展覽廳內，參觀者請勿使用閃光燈____珍貴的歷史文物。"
+      ]
+    },
+    {
+      word: "俯視",
+      s: [
+        "乘坐昂坪纜車緩緩上升，我們可以從高空____整個大嶼山翠綠的山林景色。",
+        "站在太平山頂的凌霄閣往下____，維多利亞港兩岸的摩天大廈盡收眼底。",
+        "老鷹展翅翱翔於萬里高空，銳利的目光緊緊地____着地面上的獵物。",
+        "透過飛機的舷窗往下____，地面上的房屋和汽車都變成了微小的積木。",
+        "站在高聳的觀景台上____腳下奔流不息的瀑布，令人頓感氣勢非凡。"
+      ]
+    },
+    {
+      word: "氣象萬千",
+      s: [
+        "登上泰山之巔，眼前雲海翻騰、霞光萬道，這____的壯麗奇觀令遊客驚嘆不已。",
+        "長江三峽兩岸奇峰陡立，江面煙波浩渺，展現出____的自然山水畫卷。",
+        "黃昏時分，天邊的晚霞隨着微風不斷變幻色彩，構成了一幅____的迷人圖畫。",
+        "錢塘江大潮時而波平如鏡，時而巨浪滔天，真是____，令人大開眼界。",
+        "從山頂極目遠眺，群山連綿起伏，雲霧變幻莫測，大自然的景致果然____。"
+      ]
+    },
+    {
+      word: "風光",
+      s: [
+        "桂林的山水____甲天下，每年都吸引成千上萬的中外遊客慕名而來。",
+        "火車穿過隧道後，窗外呈現出一片綠油油的田園____，令人賞心悅目。",
+        "西湖四季的____各有特色，無論是春天的柳浪還是冬天的斷橋都美不勝收。",
+        "假日裏，我們一家人到西貢郊野公園遠足，盡情欣賞大自然的明媚____。",
+        "這本旅遊畫冊收錄了世界各地的旖旎____，每一張照片都令人心馳神往。"
+      ]
+    },
+    {
+      word: "仰視",
+      s: [
+        "我們站在巨大的紅杉樹下抬頭____，只見茂密的樹冠幾乎遮蔽了整片天空。",
+        "遊客們站在天壇大佛腳下向上____，無不對這座宏偉莊嚴的銅像心生敬畏。",
+        "夏夜裏，我喜歡躺在草地上抬頭____繁星點點的夜空，尋找北斗七星的蹤影。",
+        "站在摩天大樓底部的廣場向上____，高聳入雲的玻璃幕牆在陽光下閃閃發光。",
+        "弟弟站在博物館的巨型恐龍骨架前，抬起頭久久地____，驚嘆不已。"
+      ]
+    },
+    {
+      word: "猜測",
+      s: [
+        "在未有確鑿的科學證據之前，我們不應胡亂____事情發生的原因。",
+        "老師拿着一個神秘的黑色布袋走進課室，同學們紛紛____裏面裝着甚麼禮物。",
+        "這道推理謎題十分巧妙，大家____了好幾次，還是沒有人能說出正確答案。",
+        "既然你不清楚事情的真相，最好先向當事人查問清楚，不要憑空____。",
+        "考古學家根據出土的陶器碎片，初步____這裏在兩千年前曾是一座繁華的村落。"
+      ]
+    },
+    {
+      word: "商量",
+      s: [
+        "為了籌備下周的公益金便服日攤位，班長召集了幾位幹事一起留校____對策。",
+        "遇到重大的家庭決定時，父母總會先與我們兄妹倆一起____，聽取大家的意見。",
+        "做專題研習時，組員之間應該互相____、分工合作，不應由一個人獨斷獨行。",
+        "經過一番深入的____後，我們終於決定在母親節當天親手為媽媽煮一頓晚餐。",
+        "這件事關係到全班同學的利益，我不能獨自決定，必須先跟大家____一下。"
+      ]
+    },
+    {
+      word: "誕生",
+      s: [
+        "海洋公園的大熊貓盈盈順利產下一對龍鳳胎，全港市民都為新生命的____感到雀躍。",
+        "經過科研團隊歷時五年的反覆試驗，這款全新的環保電動車終於成功____了。",
+        "每當有新嬰兒在醫院____，病房裏總會傳出家屬歡欣的笑聲與祝賀。",
+        "世界第一台電子計算機的____，標誌着人類正式邁進了資訊科技的新時代。",
+        "一部優秀動畫電影的____，背後凝聚了數百位畫師與配音員日以繼夜的心血。"
+      ]
+    }
+  ],
+
+  // 第四組（第 37 - 48 詞）
+  [
+    {
+      word: "心滿意足",
+      s: [
+        "小花貓吃飽了鮮美的魚乾後，便____地蜷縮在陽光下的地毯上睡覺。",
+        "弟弟終於買到了盼望已久的遙控模型車，一路上捧着盒子，顯得____。",
+        "飽餐了一頓豐盛的自助晚餐後，大家都摸着圓滾滾的肚子，____地離開餐廳。",
+        "只要能看到孫兒健康快樂地成長，年邁的祖母便已經感到____了。",
+        "完成了一整天的義工服務後，雖然身體疲累，但同學們卻帶着____的笑容回家。"
+      ]
+    },
+    {
+      word: "神態",
+      s: [
+        "畫家筆下的這位老漁夫目光堅定、____安詳，彷彿正在欣賞平靜的海面。",
+        "雖然面對強勁的比賽對手，但這位乒乓球選手依然保持從容自若的____。",
+        "石窟裏的佛像造型各異，有的威嚴莊重，有的慈祥微笑，每一尊的____都栩栩如生。",
+        "媽媽察覺到弟弟說話時閃爍不定的____，立刻知道他隱瞞了測驗不及格的事。",
+        "演員只靠一個微妙的眼神和高傲的____，便把劇中貴族的角色演活了。"
+      ]
+    },
+    {
+      word: "浮現",
+      s: [
+        "每當我聽到這首熟悉的童謠，童年時與外婆在鄉間生活的溫馨畫面便在腦海中____。",
+        "聽見老師在全班面前讚揚自己的畫作，小玲的臉上頓時____出害羞而燦爛的笑容。",
+        "看着畢業紀念冊上的合照，六年來與同學一起上課、玩耍的往事一一在眼前____。",
+        "讀到故事感人肺腑的結局時，媽媽的眼眶裏不禁____出晶瑩的淚光。",
+        "夜深人靜的時候，白天在比賽中失誤的情景再次在他的腦海裏清晰地____。"
+      ]
+    },
+    {
+      word: "熙來攘往",
+      s: [
+        "農曆新年前的年宵花市熱鬧非常，通道上____的市民都在挑選漂亮的年花。",
+        "旺角彌敦道一帶商業繁榮，每天從早到晚街道上都是____的行人和車輛。",
+        "站在天橋上往下看，尖沙咀碼頭廣場上遊客____，到處充滿大都市的活力。",
+        "古畫《清明上河圖》細緻地描繪了汴京城內商舖林立、百姓____的繁華景象。",
+        "平日____的商業區，在星期日清晨卻顯得格外交外寧靜，路上只有寥寥數人。"
+      ]
+    },
+    {
+      word: "流暢",
+      s: [
+        "這篇獲獎作文的文筆十分____，段落之間的過渡自然，讀起來一氣呵成。",
+        "經過半年的苦練，妹妹現在已經能夠用鋼琴____地彈奏出整首莫扎特奏鳴曲。",
+        "演講比賽的冠軍得主在台上吐字清晰、表達____，博得評判的一致好評。",
+        "這位翻譯員精通中英雙語，能把外國嘉賓的演講內容即時翻譯得既準確又____。",
+        "花樣滑冰選手在冰面上做出連串旋轉動作，姿態優美____，猶如飛燕掠過水面。"
+      ]
+    },
+    {
+      word: "東拐西轉",
+      s: [
+        "古老的威尼斯小鎮巷弄交錯，我們跟隨導遊在狹窄的小巷裏____，才找到那間百年書店。",
+        "送貨司機在不熟悉的舊區街道裏____，花了半小時才找到正確的送貨地址。",
+        "小老鼠為了躲避花貓的追捕，在花園的草叢與石縫間____，轉眼便不見了蹤影。",
+        "這座大型迷宮的設計十分複雜，我們在裏面____了很久，依然找不到出口。",
+        "穿過牌坊後，我們順着青石板小路____，終於來到隱藏在深山中的古廟。"
+      ]
+    },
+    {
+      word: "面有難色",
+      s: [
+        "當組長要求小強在明天之內獨力完成整份壁報設計時，小強頓時____，不知如何是好。",
+        "看見媽媽端上一盤苦瓜炒牛肉，一向怕吃苦的弟弟立刻____，遲遲不肯舉起筷子。",
+        "朋友向叔叔借一大筆錢周轉，但叔叔最近手頭也很緊，不禁顯得____。",
+        "老師請同學出來示範高難度的體操動作，大家都你眼望我眼，個個____。",
+        "見他對這個請求____，我便識趣地主動收回建議，免得令他為難。"
+      ]
+    },
+    {
+      word: "讚不絕口",
+      s: [
+        "外國遊客品嚐過香港地道的蝦餃和燒賣後，都豎起大拇指，對點心的美味____。",
+        "參觀完故宮博物院的珍品展，觀眾們無不對古代工匠精湛的技藝____。",
+        "媽媽親手焗製的芝士蛋糕香濃軟滑，吃過的親戚朋友全都____。",
+        "張老師批改小美的周記時，對她細膩感人的描寫和工整的字跡____。",
+        "這部電影的劇情感人至深，視覺效果亦十分震撼，難怪影評人都對它____。"
+      ]
+    },
+    {
+      word: "生產",
+      s: [
+        "這間現代化的食品工廠引入了自動機械臂，每天能____超過十萬包餅乾。",
+        "為了減少環境污染，不少汽車製造商已停止研發燃油車，改為全力____電動車。",
+        "農夫辛勤地耕作，為城市居民____出新鮮健康的蔬菜和糧食。",
+        "在疫情初期，本地廠商迅速設立無塵車間，日以繼夜地____防疫口罩供應市民。",
+        "這批玩具在出廠前都經過嚴格的安全檢測，確保整個____過程符合國際標準。"
+      ]
+    },
+    {
+      word: "擺手",
+      s: [
+        "面對途人的熱心道謝，那位拾金不昧的清潔工人只是微笑着連連____，說這是應該做的。",
+        "爺爺已經吃得很飽了，見媽媽還要給他添飯，便連忙____示意不要再盛。",
+        "守門員在混亂中撞傷了膝蓋，他痛苦地坐在草地上向場邊教練____，要求換人。",
+        "由於圖書館內必須保持安靜，管理員向正在大聲交談的學生輕輕____，示意他們停止說話。",
+        "聽見弟弟提出要先玩電子遊戲再做功課，爸爸立刻果斷地____拒絕。"
+      ]
+    },
+    {
+      word: "精巧",
+      s: [
+        "這個瑞士製造的音樂盒結構十分____，打開盒蓋便會有小天鵝隨着音樂缓缓旋轉。",
+        "蘇州園林的設計極為____，在有限的空間內巧妙地融合了假山、池塘與亭台樓閣。",
+        "展覽櫃裏陳列着清朝皇室使用的懷錶，每一枚的鑲嵌工藝都異常____。",
+        "姐姐用彩色絲帶和乾花編織了一個手工____的書籤，送給我作為生日禮物。",
+        "這座微縮模型以一比一百的比例，把舊香港的唐樓和街市還原得細緻____。"
+      ]
+    },
+    {
+      word: "恆久",
+      s: [
+        "真正的友誼就像陳年醇酒一樣，需要雙方真誠對待，才能保持____不變。",
+        "鑽石因為質地堅硬、光芒璀璨，常被世人視為____愛情的象徵。",
+        "古典文學名著之所以能流傳千年，是因為作品中蘊含着____的人性光輝與哲理。",
+        "和平與安定並非理所當然，需要世界各國共同守護，才能維持____的繁榮。",
+        "父母對子女無私的關愛是最深厚、最____的，永遠不會隨歲月而減退。"
+      ]
+    }
+  ],
+
+  // 第五組（第 49 - 60 詞）
+  [
+    {
+      word: "入神",
+      s: [
+        "弟弟坐在圖書館的角落裏看偵探小說看得十分____，連媽媽走到他身旁也沒有察覺。",
+        "音樂會上，小提琴家悠揚的琴聲如泣如訴，台下的聽眾全都聽得____極了。",
+        "爺爺站在公園的棋盤旁，看着兩位老朋友下象棋看得十分____，忘了回家吃午飯。",
+        "妹妹盯着魚缸裏五彩繽紛的熱帶魚游來游去，看得異常____，久久不願離開。",
+        "歷史老師生動地講述赤壁之戰的經過，全班同學都聽得格外____。"
+      ]
+    },
+    {
+      word: "籠罩",
+      s: [
+        "清晨時分，乳白色的濃霧從湖面升起，把整個寧靜的小山村緊緊地____住。",
+        "太陽下山後，深沉的暮色漸漸四合，很快便把整片廣闊的草原____在夜幕之中。",
+        "球隊在決賽中惜敗，更衣室裏頓時____着一股低落和惋惜的氣氛。",
+        "每逢春天回南天，維多利亞港兩岸的大廈往往被濛濛的煙雨所____。",
+        "在溫暖的火爐旁，全家人圍坐在一起說說笑笑，屋子裏____着融洽溫馨的氣氛。"
+      ]
+    },
+    {
+      word: "隱隱約約",
+      s: [
+        "夜深人靜時，我從睡夢中____聽見客廳傳來父母低聲交談的聲音。",
+        "隔着厚厚的木門，我們只能____聽見音樂室裏傳來一陣陣鋼琴伴奏聲。",
+        "由於那件事發生在我三歲的時候，我現在腦海裏只____記得幾個模糊的片段。",
+        "在狂風暴雨的夜晚，遠處海面上____傳來輪船求救的汽笛聲。",
+        "走進幽深的山谷，我們____聞到一陣清幽的野百合花香，卻找不到花叢在哪裏。"
+      ]
+    },
+    {
+      word: "呈現",
+      s: [
+        "深秋時節，山坡上的楓葉由綠轉紅，整座山林____出一片火紅絢麗的迷人景象。",
+        "經過政府多年的綠化工程，這條原本荒涼的河道如今____出一派生機勃勃的面貌。",
+        "在顯微鏡的放大下，一滴看似清澈的池水竟然____出無數微小的浮游生物。",
+        "雨過天晴後，蔚藍的天空中____出一道七彩繽紛的彩虹，美麗極了。",
+        "這份詳盡的調查報告，清晰地____了香港小學生每日平均閱讀時間的變化趨勢。"
+      ]
+    },
+    {
+      word: "輪廓",
+      s: [
+        "在皎潔的月光映照下，遠處連綿起伏的山脈只勾勒出一個黑黝黝的____。",
+        "畫家在畫布上先用炭筆輕輕畫出人物臉部的____，然後才逐步塗上豐富的油彩。",
+        "隨着晨霧慢慢散去，海面上那座古建築的清晰____終於顯露在我們眼前。",
+        "雖然這座古代石雕經歷了千年風化，但我們仍能從外型看出駿馬矯健的____。",
+        "作家在動筆撰寫長篇小說前，習慣先在筆記本上列出整個故事大綱的____。"
+      ]
+    },
+    {
+      word: "遮蓋",
+      s: [
+        "經過一整夜的大風雪，厚厚的白雪把院子裏的泥土和枯枝全都____得嚴嚴實實。",
+        "農夫在播種後，細心地用一層薄薄的泥土把種子____好，防止被麻雀啄食。",
+        "茂密的爬山虎藤蔓順着牆壁向上攀爬，把整面紅磚牆完全____住了。",
+        "中秋節晚上，一朵厚厚的烏雲突然飄來，把原本圓圓的月亮____了一大半。",
+        "他試圖用塗改液把錯別字____掉，結果卻在作業本上留下一塊難看的白斑。"
+      ]
+    },
+    {
+      word: "儀態萬千",
+      s: [
+        "舞台上的民族舞蹈員隨着樂聲翩翩起舞，舉手投足間____，贏得全場掌聲。",
+        "春天的洛陽牡丹園內，一朵朵盛開的牡丹花在微風中搖曳生姿，顯得____。",
+        "時裝表演台上，模特兒身穿華麗的傳統旗袍緩步走出，展現出東方女性____的魅力。",
+        "池塘裏的荷花有的含苞待放，有的昂首怒放，在碧綠荷葉的襯托下真是____。",
+        "這幅唐代仕女圖描繪了宮廷女子賞花遊園的情景，畫中人物個個____，栩栩如生。"
+      ]
+    },
+    {
+      word: "怦然心動",
+      s: [
+        "櫥窗裏那套精緻的骨瓷茶具在燈光下閃閃發亮，讓喜愛收藏茶具的媽媽看得____。",
+        "聽到旅行社介紹這個可以親眼觀賞北極光的冰島行程，大家都感到____，很想報名。",
+        "書店裏那本附有立體恐龍模型的百科全書，令酷愛恐龍的弟弟一見便____。",
+        "站在高處眺望這片未受污染的蔚藍海岸，大自然純淨的美景令人不禁____。",
+        "海報上那雙設計前衛的限量版運動鞋，讓熱愛籃球的哥哥看得____。"
+      ]
+    },
+    {
+      word: "由衷",
+      s: [
+        "醫護人員日以繼夜地照顧病患，我們對他們無私奉獻的精神表示____的敬意。",
+        "在離別的歡送會上，同學們向悉心教導我們三年的陳老師表達了____的感謝。",
+        "看到殘疾運動員在賽場上克服身體障礙、奮力拼搏，全場觀眾都發出____的讚嘆。",
+        "得知好朋友在全港鋼琴大賽中勇奪冠軍，我____地為他感到高興和自豪。",
+        "老伯伯緊握着消防員的手，對他們在火場中救出自己一家的恩情致以____的謝意。"
+      ]
+    },
+    {
+      word: "和煦",
+      s: [
+        "春天來了，____的陽光灑在翠綠的草地上，讓人感到格外溫暖舒適。",
+        "在____的春風吹拂下，公園裏的杜鵑花爭相盛開，把山坡點綴得五彩繽紛。",
+        "冬日午後，老人们喜歡坐在公園的長椅上，一邊曬着____的陽光，一邊閒話家常。",
+        "清晨的海邊吹來陣陣____的微風，帶着淡淡的海水氣息，令人精神一振。",
+        "李老師臉上總是掛着如春風般____的笑容，讓每位學生都感到親切溫暖。"
+      ]
+    },
+    {
+      word: "心曠神怡",
+      s: [
+        "漫步在空氣清新的竹林小徑，聽着清脆的鳥鳴和潺潺流水聲，真令人感到____。",
+        "登上山頂極目遠眺，眼前是一望無際的碧海藍天，頓時讓人忘卻煩惱，____。",
+        "雨後的郊野公園彌漫着青草與泥土的芳香，深呼吸一口新鮮空氣，倍感____。",
+        "坐在西貢海邊的涼亭裏，吹着涼爽的海風，看着白帆點點，實在令人____。",
+        "這首古箏曲旋律優美寧靜，聽着聽着，彷彿置身於世外桃源，叫人____。"
+      ]
+    },
+    {
+      word: "磅礴",
+      s: [
+        "黃果樹大瀑布從高聳的懸崖上飛瀉而下，水聲震耳欲聾，氣勢極為____。",
+        "萬里長城像一條巨龍般在崇山峻嶺之間蜿蜒盤旋，展現出雄偉____的氣魄。",
+        "交響樂團演奏的《黃河大合唱》旋律激昂、氣勢____，深深震撼了每位聽眾的心。",
+        "站在壺口瀑布岸邊，看着渾黃的河水咆哮着衝下深槽，那____的氣勢令人嘆為觀止。",
+        "這幅巨型國畫描繪了長江萬里奔流的壯麗景象，筆力雄健，氣勢____。"
+      ]
+    }
+  ],
+
+  // 第六組（第 61 - 72 詞）
+  [
+    {
+      word: "屹立",
+      s: [
+        "這座千年古塔經歷了無數次狂風暴雨和地震的考驗，至今依然穩固地____在山頂上。",
+        "尖沙咀鐘樓百年來一直靜靜地____在維多利亞港海旁，見證着香港歷史的變遷。",
+        "邊防戰士頂着刺骨的寒風，像松柏一樣堅定地____在祖國的邊境哨崗上。",
+        "雄偉的人民英雄紀念碑巍然____在天安門廣場中央，令人肅然起敬。",
+        "海邊的燈塔在狂風巨浪中依然堅強地____着，為黑夜中航行的船隻指引方向。"
+      ]
+    },
+    {
+      word: "人聲鼎沸",
+      s: [
+        "農曆八月十八日觀潮那天，錢塘江大堤上早就擠滿了成千上萬的遊客，現場____。",
+        "除夕倒數的鐘聲即將敲響，時代廣場上聚集了大批市民，到處____，熱鬧非凡。",
+        "清晨的魚市場剛開市便已是____，魚販的叫賣聲與買家的講價聲交織在一起。",
+        "足球決賽進入最後五分鐘，整個大球場內____，球迷們都在為支持的隊伍高聲吶喊。",
+        "太平清醮搶包山比賽開始前，長洲北帝廟遊樂場四周擠得水洩不通，一片____。"
+      ]
+    },
+    {
+      word: "踮腳",
+      s: [
+        "由於巡遊隊伍前方的觀眾太多，個子矮小的弟弟只好拼命____，才能越過人群看到花車。",
+        "書架最頂層放着一本精美的童話書，妹妹努力____伸長手臂，還是差一點才拿得到。",
+        "芭蕾舞演員穿着特製的舞鞋，輕盈地____在舞台上旋轉，姿態優雅得像一隻白天鵝。",
+        "為了不吵醒正在午睡的媽媽，小玲輕輕地____走進房間拿取外套。",
+        "圍觀的群眾把街角圍得水洩不通，站在後排的人紛紛____張望，想知道發生了甚麼事。"
+      ]
+    },
+    {
+      word: "沸騰",
+      s: [
+        "水壺裏的開水已經完全____，壺嘴冒出陣陣白色的蒸氣，並發出響亮的鳴笛聲。",
+        "當香港運動員衝過終點奪得奧運金牌的一刻，整個直播商場的觀眾頓時歡呼____起來。",
+        "大浪撞擊在海邊的礁石上，激起千層雪白的浪花，江面就像____的開水一樣翻滾不息。",
+        "媽媽吩咐我等湯鍋裏的清水____後，才把包好的雲吞逐一放進去煮熟。",
+        "聽見校長宣佈明天舉行全校驚喜遊戲日，禮堂裏的同學立刻熱血____，歡呼聲震耳欲聾。"
+      ]
+    },
+    {
+      word: "橫貫",
+      s: [
+        "長江猶如一條碧綠的絲帶，由西向東____中國神州大地，最終流入東海。",
+        "港珠澳大橋宛如一條巨龍，雄偉地____在伶仃洋海面上，連接香港、珠海和澳門。",
+        "那條新建的高速鐵路____東西部多個省份，大大縮短了城鄉之間的交通時間。",
+        "天山山脈高聳入雲，東西向地____新疆中部，把廣闊的土地分為南北兩部分。",
+        "一道雪白的浪潮猶如千萬匹戰馬並駕齊驅，浩浩蕩蕩地____整個寬闊的江面。"
+      ]
+    },
+    {
+      word: "浩浩蕩蕩",
+      s: [
+        "長江匯聚了無數支流的河水，____地向東奔流，氣勢雄偉非凡。",
+        "公益金百萬行當天，數以萬計的善長仁翁組成____的隊伍，沿着公路邁步前行。",
+        "錢塘江大潮由遠而近，形成一堵數米高的水牆，____地朝着岸邊飛奔而來。",
+        "秋天到了，成千上萬隻南遷的候鳥排成整齊的隊形，____地飛越濕地上空。",
+        "古代皇帝出巡時，隨行的文武百官與侍衛組成____的儀仗隊，場面極為壯觀。"
+      ]
+    },
+    {
+      word: "山崩地裂",
+      s: [
+        "大潮撞擊海塘時發出震耳欲聾的巨響，大地彷彿都在搖晃，真有____之勢。",
+        "隨着引爆器按下，遠處需要拆卸的舊礦山傳來一陣____般的爆炸巨響，煙塵滾滾。",
+        "火山爆發的一刻，滾燙的岩漿噴湧而出，伴隨着____般的轟鳴聲，令人驚心動魄。",
+        "夏日的午後突然烏雲密佈，緊接着一聲____般的驚雷在頭頂炸開，大雨傾盆而下。",
+        "兩軍在戰場上擂鼓吶喊，萬馬奔騰的蹄聲與喊殺聲匯聚在一起，如同____一般。"
+      ]
+    },
+    {
+      word: "顫動",
+      s: [
+        "一隻彩蝶輕輕停在嬌嫩的花瓣上，花枝隨即微微地____了幾下。",
+        "每當重型貨櫃車高速駛過這座舊木橋時，橋面都會明顯地____起來。",
+        "隨着小提琴家手指在琴弦上快速撥弄，琴弦的細微____化作了動人的音符。",
+        "清晨的荷葉上滾動着一顆晶瑩的露珠，在微風吹拂下輕輕____，險些掉進池塘裏。",
+        "遠處傳來隱隱的悶雷聲，連窗戶上的玻璃也隨着音波微微地____。"
+      ]
+    },
+    {
+      word: "霎時",
+      s: [
+        "剛才還是陽光普照的好天氣，忽然狂風大作，____間烏雲密佈，下起傾盆大雨來。",
+        "當魔術師把白布一掀，空空如也的鳥籠裏____出現了兩隻雪白的鴿子，全場驚呼。",
+        "聽見老師嚴厲的咳嗽聲，原本吵鬧不已的課室____變得鴉雀無聲。",
+        "煙花在夜空中轟然綻放，漆黑的海面____被照耀得如同白晝一樣明亮。",
+        "他不小心碰倒了第一塊骨牌，整排精心排列的骨牌____全部倒下，前功盡棄。"
+      ]
+    },
+    {
+      word: "奔騰",
+      s: [
+        "黃河之水從高聳的峽谷中呼嘯而出，有如萬馬____般洶湧地流向遠方。",
+        "暴雨過後，山澗裏的溪水暴漲，化作一股渾濁的洪流，在岩石間日夜不息地____。",
+        "站在大草原上，看着數百匹駿馬迎着夕陽盡情____，場面真是壯觀極了。",
+        "大潮猶如千萬匹白色戰馬並駕齊驅，浩浩蕩蕩地飛馳而來，在江面上肆意____。",
+        "望着眼前洶湧澎湃、咆哮____的壺口瀑布，遊客們無不感受到大自然震撼的力量。"
+      ]
+    },
+    {
+      word: "潮漲",
+      s: [
+        "傍晚____的時候，海水慢慢湧上沙灘，把我們剛才堆好的沙堡完全淹沒了。",
+        "漁民出海捕魚前，都會仔細查閱天文台公佈的____與潮退時間表，確保航行安全。",
+        "受困於礁石上的釣魚人士，由於沒有留意____時間，被不斷上升的海水圍困。",
+        "每逢農曆初一和十五的大____，海浪拍打岸邊堤壩的聲音總是特別響亮。",
+        "當海水____時，原本露出水面的連島沙洲便會被海水覆蓋，行人無法徒步走過去。"
+      ]
+    },
+    {
+      word: "若隱若現",
+      s: [
+        "山谷裏雲霧繚繞，遠處的千年古寺在白茫茫的雲海中____，宛如人間仙境。",
+        "夜晚的竹林裏，幾隻螢火蟲提着綠色的小燈籠飛舞，微弱的光芒在草叢間____。",
+        "大霧還未完全散去，江面上的小漁船在薄霧中____，構成一幅淡雅的水墨畫。",
+        "透過茂密的樹葉縫隙往上望，彎彎的月牙兒在隨風擺動的枝葉間____。",
+        "遠處的海平線上，一座小島在翻滾的波浪與水氣之間____，顯得格外神秘。"
+      ]
+    }
+  ]
+];
+
+// 儲存 Key
+const STORAGE_KEY_MISTAKES = "p5_chinese_fill_mistakes_v2";
+const STORAGE_KEY_SCORES = "p5_chinese_fill_scores_v2";
+
+// 狀態管理
+let currentMode = "home"; // "home" | "practice" | "mistake_hub" | "mistake_quiz"
+let currentPracticeIdx = 0; // 0 to 4 (練習一至五)
+let currentGroupIdx = 0; // 0 to 5 (第一組至第六組)
+let selectedWord = null;
+let activeBlankIndex = null;
+
+// 每個練習的作答紀錄: practiceState[groupIdx] = { questions: [], userAnswers: {}, submitted: false }
+let practiceSession = [];
+let mistakeQuizSession = null;
+
+function loadMistakes() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_MISTAKES);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveMistakes(list) {
+  localStorage.setItem(STORAGE_KEY_MISTAKES, JSON.stringify(list));
+  updateMistakeBadge();
+}
+
+function loadScores() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_SCORES);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveScore(practiceIdx, score, total) {
+  const scores = loadScores();
+  const prev = scores[practiceIdx];
+  if (!prev || score >= prev.score) {
+    scores[practiceIdx] = {
+      score,
+      total,
+      date: new Date().toLocaleDateString("zh-HK")
+    };
+  }
+  localStorage.setItem(STORAGE_KEY_SCORES, JSON.stringify(scores));
+}
+
+function updateMistakeBadge() {
+  const badge = document.getElementById("mistakeCountBadge");
+  if (badge) {
+    badge.textContent = loadMistakes().length;
+  }
+}
+
+// 決定性洗牌（讓每個練習內的題目順序與詞語框順序錯開，但固定可重現）
+function seededShuffle(arr, seed) {
+  const copy = [...arr];
+  let s = seed;
+  for (let i = copy.length - 1; i > 0; i--) {
+    s = (s * 9301 + 49297) % 233280;
+    const j = Math.floor((s / 233280) * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+// 建立指定練習 (0..4) 的 6 組資料
+function initPracticeSession(practiceIdx) {
+  currentPracticeIdx = practiceIdx;
+  currentGroupIdx = 0;
+  selectedWord = null;
+  activeBlankIndex = null;
+
+  practiceSession = VOCAB_GROUPS.map((groupItems, gIdx) => {
+    const rawQuestions = groupItems.map((item, idx) => ({
+      id: `P${practiceIdx + 1}_G${gIdx + 1}_W${idx}`,
+      practiceIdx,
+      groupIdx: gIdx,
+      word: item.word,
+      sentence: item.s[practiceIdx]
+    }));
+
+    // 供詞框詞語順序與題目順序分別洗牌
+    const bankWords = seededShuffle(
+      groupItems.map(x => x.word),
+      (practiceIdx + 1) * 100 + gIdx * 17 + 7
+    );
+    const shuffledQuestions = seededShuffle(
+      rawQuestions,
+      (practiceIdx + 1) * 300 + gIdx * 31 + 13
+    );
+
+    return {
+      groupIdx: gIdx,
+      bankWords,
+      questions: shuffledQuestions,
+      userAnswers: {},
+      submitted: false
+    };
+  });
+
+  currentMode = "practice";
+  render();
+}
+
+function goHome() {
+  currentMode = "home";
+  selectedWord = null;
+  activeBlankIndex = null;
+  render();
+}
+
+function render() {
+  updateMistakeBadge();
+  const main = document.getElementById("mainView");
+  if (currentMode === "home") {
+    renderHome(main);
+  } else if (currentMode === "practice") {
+    renderPracticePaper(main);
+  } else if (currentMode === "mistake_hub") {
+    renderMistakeHub(main);
+  } else if (currentMode === "mistake_quiz") {
+    renderMistakeQuiz(main);
+  }
+}
+
+// 首頁：五份練習 + 教師審訂說明
+function renderHome(container) {
+  const scores = loadScores();
+  const mistakes = loadMistakes();
+  const chineseNums = ["一", "二", "三", "四", "五"];
+
+  let cardsHtml = "";
+  for (let i = 0; i < 5; i++) {
+    const rec = scores[i];
+    const scoreBadge = rec
+      ? `<span class="badge-score" style="background:#dcfce7;color:#15803d;">最高紀錄：${rec.score} / ${rec.total} (${Math.round((rec.score/rec.total)*100)}%)</span>`
+      : `<span class="badge-score">尚未完成</span>`;
+
+    cardsHtml += `
+      <div class="practice-card">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span class="card-title">練習${chineseNums[i]}（全卷 72 題）</span>
+            ${scoreBadge}
+          </div>
+          <p class="card-meta">
+            • 涵蓋全部 72 個指定詞語（每詞出現一次）<br>
+            • 分為 6 組作答（每組 12 個供詞配 12 題）<br>
+            • 每組完成後即時小結算，最後設全卷總報告
+          </p>
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="initPracticeSession(${i})">
+          ✍️ 開始練習${chineseNums[i]}
+        </button>
+      </div>
+    `;
+  }
+
+  container.innerHTML = `
+    <div class="exam-paper">
+      <div class="exam-header">
+        <div class="exam-header-top">
+          <div class="exam-code">香港小學五年級中文科 — 考前供詞填充溫習卷</div>
+          <div class="student-meta">
+            <span>詞語總數：<strong style="color:var(--accent-primary)">72 個</strong></span>
+            <span>題庫總量：<strong style="color:var(--accent-primary)">360 題（絕不重複）</strong></span>
+          </div>
+        </div>
+        <div class="exam-scope">溫習模式：仿香港小學測驗卷格式（每 12 題一組 ‧ 點選填詞免打字 ‧ 自動錯題記錄）</div>
+      </div>
+
+      <div style="background:#eff6ff;border:1.5px solid #93c5fd;padding:14px 18px;border-radius:6px;margin-bottom:18px;font-size:0.98rem;">
+        <strong>👩‍🏫 資深小五中文教師審題要點：</strong>
+        <ul style="margin-top:6px;padding-left:20px;">
+          <li><strong>嚴格區分近義詞</strong>：如「隱隱約約／若隱若現」、「氣象萬千／儀態萬千」、「浮現／呈現」、「籠罩／遮蓋」已加入明確語法及感官線索，並分配在不同組別，確保每題只有唯一標準答案。</li>
+          <li><strong>點選填詞操作</strong>：先點擊上方詞語框的詞語，再點擊句子橫線即可填入（或先點橫線再選詞）；每個詞語在同組只能用一次。</li>
+        </ul>
+      </div>
+
+      <div class="home-grid">
+        ${cardsHtml}
+      </div>
+
+      <div class="group-summary-card" style="margin-top:24px;background:#fff5f5;border-color:var(--wrong-red);">
+        <div class="summary-title">
+          <span style="color:var(--wrong-red);">📕 錯題溫習專區（目前累積錯題：${mistakes.length} 題）</span>
+          <button class="btn btn-danger" onclick="openMistakeCenter()">進入錯題溫習</button>
+        </div>
+        <p style="font-size:0.95rem;color:var(--ink-muted);">
+          系統會自動記錄你在「練習一至五」中曾經答錯的題目。你可以隨時進入「錯題溫習」檢視正確答案，或只抽出曾做錯的題目重新測驗！
+        </p>
+      </div>
+    </div>
+  `;
+}
+
+// 渲染句子（將 ____ 轉為可點擊橫線）
+function formatSentenceHtml(qObj, qIndexInGroup, userAns, isSubmitted) {
+  const parts = qObj.sentence.split("____");
+  const isTarget = !isSubmitted && activeBlankIndex === qIndexInGroup;
+  let slotClass = "blank-slot";
+  if (isTarget) slotClass += " active-target";
+  if (userAns) slotClass += " filled";
+
+  let displayWord = userAns ? userAns : "（點此填詞）";
+  let correctionHtml = "";
+
+  if (isSubmitted) {
+    if (userAns === qObj.word) {
+      slotClass += " correct";
+      displayWord = `${userAns} ✓`;
+    } else {
+      slotClass += " wrong";
+      displayWord = userAns ? `${userAns} ✗` : "（未作答）✗";
+      correctionHtml = `<span class="correction-tag">正確答案：${qObj.word}</span>`;
+    }
+  }
+
+  const clickAttr = isSubmitted ? "" : `onclick="handleBlankClick(${qIndexInGroup})"`;
+
+  return `
+    ${parts[0]}<span class="${slotClass}" ${clickAttr}>${displayWord}</span>${parts[1] || ""}${correctionHtml}
+  `;
+}
+
+// 渲染練習試卷（每組 12 題）
+function renderPracticePaper(container) {
+  const chineseNums = ["一", "二", "三", "四", "五", "六"];
+  const grp = practiceSession[currentGroupIdx];
+  const isSubmitted = grp.submitted;
+
+  // 計算哪些詞已被填入本組橫線
+  const usedWordsSet = new Set(Object.values(grp.userAnswers).filter(Boolean));
+
+  // 分組頁籤
+  let tabsHtml = "";
+  practiceSession.forEach((g, idx) => {
+    let cls = "group-tab";
+    if (idx === currentGroupIdx) cls += " active";
+    if (g.submitted) cls += " done";
+
+    let scoreText = "";
+    if (g.submitted) {
+      const correctCnt = g.questions.filter((q, qi) => g.userAnswers[qi] === q.word).length;
+      scoreText = `(${correctCnt}/12)`;
+    }
+    tabsHtml += `<button class="${cls}" onclick="switchGroup(${idx})">第${chineseNums[idx]}組 ${scoreText}</button>`;
+  });
+
+  // 檢查是否全部 6 組已完成
+  const allGroupsDone = practiceSession.every(g => g.submitted);
+
+  // 詞語框
+  let bankHtml = "";
+  grp.bankWords.forEach(w => {
+    const isUsed = usedWordsSet.has(w);
+    const isSelected = !isSubmitted && selectedWord === w;
+    let cls = "word-chip";
+    if (isUsed) cls += " used";
+    if (isSelected) cls += " selected";
+    const clickAttr = isSubmitted ? "" : `onclick="handleWordClick('${w}')"`;
+    bankHtml += `<div class="${cls}" ${clickAttr}>${w}</div>`;
+  });
+
+  // 12 條題目
+  let questionsHtml = "";
+  grp.questions.forEach((qObj, qIdx) => {
+    const globalNum = currentGroupIdx * 12 + qIdx + 1;
+    const ans = grp.userAnswers[qIdx] || "";
+    questionsHtml += `
+      <div class="question-row">
+        <div class="q-num">${globalNum}.</div>
+        <div class="q-content">
+          ${formatSentenceHtml(qObj, qIdx, ans, isSubmitted)}
+        </div>
+      </div>
+    `;
+  });
+
+  // 本組小結算或提交按鈕
+  const filledCount = Object.keys(grp.userAnswers).filter(k => grp.userAnswers[k]).length;
+  let bottomSummaryHtml = "";
+
+  if (!isSubmitted) {
+    bottomSummaryHtml = `
+      <div class="footer-bar">
+        <div style="font-weight:700;color:var(--ink-muted);">
+          本組已填寫：<strong style="color:var(--accent-primary)">${filledCount} / 12</strong> 題
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn" onclick="clearCurrentGroupAnswers()">🔄 清空本組重填</button>
+          <button class="btn btn-primary" onclick="submitCurrentGroup()">
+            ✅ 提交第${chineseNums[currentGroupIdx]}組並查看小結算
+          </button>
+        </div>
+      </div>
+    `;
+  } else {
+    const correctCnt = grp.questions.filter((q, qi) => grp.userAnswers[qi] === q.word).length;
+    const wrongCnt = 12 - correctCnt;
+    const nextBtnHtml = currentGroupIdx < 5
+      ? `<button class="btn btn-primary" onclick="switchGroup(${currentGroupIdx + 1})">➡️ 進入第${chineseNums[currentGroupIdx + 1]}組（下一組）</button>`
+      : `<button class="btn btn-primary" onclick="scrollToFullReport()">📊 查看全卷 72 題總報告</button>`;
+
+    bottomSummaryHtml = `
+      <div class="group-summary-card">
+        <div class="summary-title">
+          <span>📋 第${chineseNums[currentGroupIdx]}組小結算結果</span>
+          <span style="color:${correctCnt === 12 ? 'var(--correct-green)' : 'var(--accent-primary)'}">
+            得分：${correctCnt} / 12 題（答對 ${correctCnt} 題，答錯 ${wrongCnt} 題）
+          </span>
+        </div>
+        <p style="font-size:0.95rem;color:var(--ink-muted);margin-bottom:14px;">
+          ${wrongCnt > 0 ? `本組有 ${wrongCnt} 題答錯，已自動加入「錯題溫習」記錄中，請先核對上方綠色正確答案。` : `太棒了！本組 12 個詞語全部填寫正確！`}
+        </p>
+        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <button class="btn" onclick="retryCurrentGroup()">🔁 重做本組 12 題</button>
+          ${nextBtnHtml}
+        </div>
+      </div>
+    `;
+  }
+
+  // 全卷總報告（當 6 組都提交後顯示）
+  let fullReportHtml = "";
+  if (allGroupsDone) {
+    let totalCorrect = 0;
+    let groupBreakdownHtml = "";
+    practiceSession.forEach((g, idx) => {
+      const c = g.questions.filter((q, qi) => g.userAnswers[qi] === q.word).length;
+      totalCorrect += c;
+      groupBreakdownHtml += `<span class="badge-score" style="margin-right:8px;">第${chineseNums[idx]}組：${c}/12</span>`;
+    });
+    const pct = Math.round((totalCorrect / 72) * 100);
+    saveScore(currentPracticeIdx, totalCorrect, 72);
+
+    fullReportHtml = `
+      <div id="fullReportSection" class="group-summary-card" style="margin-top:24px;border-width:3px;border-color:var(--accent-primary);background:#eff6ff;">
+        <div class="summary-title">
+          <span>🏆 練習${chineseNums[currentPracticeIdx]} — 全卷 72 題總成績報告</span>
+          <span style="font-size:1.4rem;color:var(--accent-primary);">總分：${totalCorrect} / 72 (${pct}%)</span>
+        </div>
+        <div style="margin:12px 0;">
+          ${groupBreakdownHtml}
+        </div>
+        <p style="font-size:0.98rem;margin-bottom:16px;">
+          ${totalCorrect === 72
+            ? "🎉 滿分通過！你已完全掌握本卷全部 72 個詞語的用法！"
+            : `本卷共有 ${72 - totalCorrect} 題答錯，所有錯題已自動存入「錯題溫習」專區，建議立即點擊下方按鈕溫習錯題。`}
+        </p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <button class="btn btn-danger" onclick="openMistakeCenter()">📕 前往錯題溫習</button>
+          <button class="btn btn-primary" onclick="goHome()">🏠 返回練習目錄</button>
+        </div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = `
+    <div class="exam-paper">
+      <div class="exam-header">
+        <div class="exam-header-top">
+          <div class="exam-code">P5_中文科測驗_供詞填充_練習${chineseNums[currentPracticeIdx]}</div>
+          <div class="student-meta">
+            <span>姓名：<span class="meta-line">小五學生</span></span>
+            <span>日期：<span class="meta-line">${new Date().toLocaleDateString("zh-HK")}</span></span>
+          </div>
+        </div>
+        <div class="exam-scope">考試範圍：小五詞語庫（共 72 個詞語，分六組作答）</div>
+      </div>
+
+      <div class="exam-instruction">
+        供詞填充：選出適當的詞語填在橫線上，使句子的意思完整，每個選項只能用一次。
+      </div>
+
+      <div class="group-tabs">
+        ${tabsHtml}
+      </div>
+
+      <div class="word-bank-wrapper">
+        <div class="section-label">
+          <span>第${chineseNums[currentGroupIdx]}組（第 ${currentGroupIdx * 12 + 1} - ${(currentGroupIdx + 1) * 12} 題）</span>
+          <span class="helper-tip">💡 提示：點擊詞語再點橫線填入（點擊已填橫線可清除）</span>
+        </div>
+        <div class="word-bank-box">
+          ${bankHtml}
+        </div>
+      </div>
+
+      <div class="questions-list">
+        ${questionsHtml}
+      </div>
+
+      ${bottomSummaryHtml}
+      ${fullReportHtml}
+    </div>
+  `;
+}
+
+// 點選上方供詞框的詞語
+function handleWordClick(word) {
+  const grp = practiceSession[currentGroupIdx];
+  if (grp.submitted) return;
+
+  // 若這個詞已經填在某一題，先把舊位置清掉或選取它
+  if (activeBlankIndex !== null) {
+    // 若其他題已用了這個詞，先移除舊題的該詞（確保每個選項只用一次）
+    Object.keys(grp.userAnswers).forEach(k => {
+      if (grp.userAnswers[k] === word) {
+        delete grp.userAnswers[k];
+      }
+    });
+    grp.userAnswers[activeBlankIndex] = word;
+    selectedWord = null;
+
+    // 自動跳去下一條未填的橫線
+    let nextBlank = null;
+    for (let i = 0; i < 12; i++) {
+      const checkIdx = (activeBlankIndex + 1 + i) % 12;
+      if (!grp.userAnswers[checkIdx]) {
+        nextBlank = checkIdx;
+        break;
+      }
+    }
+    activeBlankIndex = nextBlank;
+    render();
+  } else {
+    selectedWord = (selectedWord === word) ? null : word;
+    render();
+  }
+}
+
+// 點擊句子中的橫線
+function handleBlankClick(qIdx) {
+  const grp = practiceSession[currentGroupIdx];
+  if (grp.submitted) return;
+
+  if (selectedWord) {
+    // 確保每個選項只用一次
+    Object.keys(grp.userAnswers).forEach(k => {
+      if (grp.userAnswers[k] === selectedWord) {
+        delete grp.userAnswers[k];
+      }
+    });
+    grp.userAnswers[qIdx] = selectedWord;
+    selectedWord = null;
+    activeBlankIndex = null;
+  } else if (grp.userAnswers[qIdx]) {
+    // 如果橫線已有詞語，點擊即清除並選中該格
+    delete grp.userAnswers[qIdx];
+    activeBlankIndex = qIdx;
+  } else {
+    activeBlankIndex = (activeBlankIndex === qIdx) ? null : qIdx;
+  }
+  render();
+}
+
+function switchGroup(idx) {
+  currentGroupIdx = idx;
+  selectedWord = null;
+  activeBlankIndex = null;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  render();
+}
+
+function clearCurrentGroupAnswers() {
+  const grp = practiceSession[currentGroupIdx];
+  if (grp.submitted) return;
+  grp.userAnswers = {};
+  selectedWord = null;
+  activeBlankIndex = null;
+  render();
+}
+
+function retryCurrentGroup() {
+  const grp = practiceSession[currentGroupIdx];
+  grp.userAnswers = {};
+  grp.submitted = false;
+  selectedWord = null;
+  activeBlankIndex = 0;
+  render();
+}
+
+function submitCurrentGroup() {
+  const grp = practiceSession[currentGroupIdx];
+  const filledCount = Object.keys(grp.userAnswers).filter(k => grp.userAnswers[k]).length;
+  if (filledCount < 12) {
+    const ok = confirm(`本組還有 ${12 - filledCount} 題未填寫，確定要現在提交並批改嗎？`);
+    if (!ok) return;
+  }
+
+  grp.submitted = true;
+  selectedWord = null;
+  activeBlankIndex = null;
+
+  // 記錄錯題至 localStorage
+  const mistakes = loadMistakes();
+  const existingMap = new Map(mistakes.map(m => [m.id, m]));
+
+  grp.questions.forEach((q, qIdx) => {
+    const userAns = grp.userAnswers[qIdx] || "";
+    if (userAns !== q.word) {
+      existingMap.set(q.id, {
+        id: q.id,
+        practiceIdx: q.practiceIdx,
+        groupIdx: q.groupIdx,
+        word: q.word,
+        sentence: q.sentence,
+        lastWrongAns: userAns || "（未作答）",
+        timestamp: Date.now()
+      });
+    }
+  });
+
+  saveMistakes(Array.from(existingMap.values()));
+  render();
+}
+
+function scrollToFullReport() {
+  const el = document.getElementById("fullReportSection");
+  if (el) el.scrollIntoView({ behavior: "smooth" });
+}
+
+// ================= 錯題溫習專區 =================
+function openMistakeCenter() {
+  currentMode = "mistake_hub";
+  selectedWord = null;
+  activeBlankIndex = null;
+  render();
+}
+
+function renderMistakeHub(container) {
+  const mistakes = loadMistakes();
+  const chineseNums = ["一", "二", "三", "四", "五"];
+
+  if (mistakes.length === 0) {
+    container.innerHTML = `
+      <div class="exam-paper" style="text-align:center;padding:48px 24px;">
+        <h2 style="font-size:1.5rem;margin-bottom:12px;">🎉 目前沒有任何錯題記錄！</h2>
+        <p style="color:var(--ink-muted);margin-bottom:24px;">
+          你在練習中做錯的題目會自動儲存在這裏，方便考前重點重溫。
+        </p>
+        <button class="btn btn-primary" onclick="goHome()">🏠 返回練習目錄</button>
+      </div>
+    `;
+    return;
+  }
+
+  let listHtml = "";
+  mistakes.forEach((m, idx) => {
+    const highlightedSentence = m.sentence.replace(
+      "____",
+      `<strong style="color:var(--correct-green);border-bottom:2px solid var(--correct-green);padding:0 6px;">${m.word}</strong>`
+    );
+    listHtml += `
+      <div class="mistake-item">
+        <div style="flex:1;">
+          <div style="font-size:0.85rem;color:var(--ink-muted);font-weight:700;margin-bottom:4px;">
+            來源：練習${chineseNums[m.practiceIdx]}（第 ${m.groupIdx + 1} 組） ｜ 上次誤填：<span style="color:var(--wrong-red);text-decoration:line-through;">${m.lastWrongAns}</span>
+          </div>
+          <div style="font-size:1.1rem;font-weight:600;">
+            ${idx + 1}. ${highlightedSentence}
+          </div>
+        </div>
+        <button class="btn" onclick="removeSingleMistake('${m.id}')" title="已掌握，從錯題簿移除">
+          ✅ 已掌握移除
+        </button>
+      </div>
+    `;
+  });
+
+  container.innerHTML = `
+    <div class="exam-paper">
+      <div class="exam-header">
+        <div class="exam-header-top">
+          <div class="exam-code">📕 錯題溫習專區（只顯示曾經做錯的題目）</div>
+          <div>
+            <span class="badge-score" style="background:var(--wrong-bg);color:var(--wrong-red);">
+              累積錯題：${mistakes.length} 題
+            </span>
+          </div>
+        </div>
+        <div class="exam-scope">你可以先在下方溫習正確句子，然後點擊「開始錯題重測」進行供詞填充小測驗！</div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:18px;">
+        <button class="btn btn-primary" onclick="startMistakeQuiz()">
+          ✍️ 開始錯題重測（只測這 ${mistakes.length} 題）
+        </button>
+        <button class="btn btn-danger" onclick="clearAllMistakes()">
+          🗑️ 清空全部錯題記錄
+        </button>
+      </div>
+
+      <div>
+        ${listHtml}
+      </div>
+    </div>
+  `;
+}
+
+function removeSingleMistake(id) {
+  const list = loadMistakes().filter(m => m.id !== id);
+  saveMistakes(list);
+  render();
+}
+
+function clearAllMistakes() {
+  if (!confirm("確定要清空全部錯題記錄嗎？")) return;
+  saveMistakes([]);
+  render();
+}
+
+// 啟動錯題重測（每最多 12 題為一組，確保不重複供詞）
+function startMistakeQuiz() {
+  const mistakes = loadMistakes();
+  if (mistakes.length === 0) return;
+
+  // 為確保同一組內不會出現重複的正確答案詞語，將相同詞語分開到不同組
+  const groups = [];
+  mistakes.forEach(m => {
+    let placed = false;
+    for (const g of groups) {
+      if (g.length < 12 && !g.some(x => x.word === m.word)) {
+        g.push(m);
+        placed = true;
+        break;
+      }
+    }
+    if (!placed) {
+      groups.push([m]);
+    }
+  });
+
+  // 如果某組少於 6 個詞語，從同組詞庫隨機補入干擾詞（或只顯示該組錯題詞語）
+  mistakeQuizSession = groups.map((gItems, idx) => {
+    const words = gItems.map(x => x.word);
+    const bankWords = seededShuffle(words, Date.now() + idx * 19);
+    return {
+      groupIdx: idx,
+      bankWords,
+      questions: gItems,
+      userAnswers: {},
+      submitted: false
+    };
+  });
+
+  currentGroupIdx = 0;
+  selectedWord = null;
+  activeBlankIndex = 0;
+  currentMode = "mistake_quiz";
+  render();
+}
+
+function renderMistakeQuiz(container) {
+  const grp = mistakeQuizSession[currentGroupIdx];
+  const isSubmitted = grp.submitted;
+  const totalGroups = mistakeQuizSession.length;
+  const usedWordsSet = new Set(Object.values(grp.userAnswers).filter(Boolean));
+
+  let tabsHtml = "";
+  mistakeQuizSession.forEach((g, idx) => {
+    let cls = "group-tab";
+    if (idx === currentGroupIdx) cls += " active";
+    if (g.submitted) cls += " done";
+    tabsHtml += `<button class="${cls}" onclick="switchMistakeGroup(${idx})">錯題第 ${idx + 1} 組 (${g.questions.length}題)</button>`;
+  });
+
+  let bankHtml = "";
+  grp.bankWords.forEach(w => {
+    const isUsed = usedWordsSet.has(w);
+    const isSelected = !isSubmitted && selectedWord === w;
+    let cls = "word-chip";
+    if (isUsed) cls += " used";
+    if (isSelected) cls += " selected";
+    const clickAttr = isSubmitted ? "" : `onclick="handleMistakeWordClick('${w}')"`;
+    bankHtml += `<div class="${cls}" ${clickAttr}>${w}</div>`;
+  });
+
+  let questionsHtml = "";
+  grp.questions.forEach((qObj, qIdx) => {
+    const ans = grp.userAnswers[qIdx] || "";
+    const parts = qObj.sentence.split("____");
+    const isTarget = !isSubmitted && activeBlankIndex === qIdx;
+    let slotClass = "blank-slot";
+    if (isTarget) slotClass += " active-target";
+    if (ans) slotClass += " filled";
+
+    let displayWord = ans ? ans : "（點此填詞）";
+    let correctionHtml = "";
+
+    if (isSubmitted) {
+      if (ans === qObj.word) {
+        slotClass += " correct";
+        displayWord = `${ans} ✓`;
+      } else {
+        slotClass += " wrong";
+        displayWord = ans ? `${ans} ✗` : "（未作答）✗";
+        correctionHtml = `<span class="correction-tag">正確答案：${qObj.word}</span>`;
+      }
+    }
+
+    const clickAttr = isSubmitted ? "" : `onclick="handleMistakeBlankClick(${qIdx})"`;
+
+    questionsHtml += `
+      <div class="question-row">
+        <div class="q-num">${qIdx + 1}.</div>
+        <div class="q-content">
+          ${parts[0]}<span class="${slotClass}" ${clickAttr}>${displayWord}</span>${parts[1] || ""}${correctionHtml}
+        </div>
+      </div>
+    `;
+  });
+
+  let footerHtml = "";
+  if (!isSubmitted) {
+    footerHtml = `
+      <div class="footer-bar">
+        <button class="btn" onclick="openMistakeCenter()">⬅️ 返回錯題列表</button>
+        <button class="btn btn-primary" onclick="submitMistakeGroup()">✅ 提交本組錯題重測</button>
+      </div>
+    `;
+  } else {
+    const correctIds = [];
+    grp.questions.forEach((q, qi) => {
+      if (grp.userAnswers[qi] === q.word) correctIds.push(q.id);
+    });
+
+    footerHtml = `
+      <div class="group-summary-card">
+        <div class="summary-title">
+          <span>📋 錯題重測結果：答對 ${correctIds.length} / ${grp.questions.length} 題</span>
+        </div>
+        <p style="font-size:0.95rem;color:var(--ink-muted);margin-bottom:14px;">
+          你可以選擇把今次成功答對的 ${correctIds.length} 題從錯題簿中移除，或者保留下來繼續反覆練習。
+        </p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          ${correctIds.length > 0 ? `<button class="btn btn-primary" onclick="removeCorrectFromMistakeBook()">🌟 將答對的 ${correctIds.length} 題移出錯題簿</button>` : ""}
+          ${currentGroupIdx < totalGroups - 1 ? `<button class="btn" onclick="switchMistakeGroup(${currentGroupIdx + 1})">➡️ 下一組錯題</button>` : ""}
+          <button class="btn" onclick="openMistakeCenter()">📕 返回錯題溫習主頁</button>
+        </div>
+      </div>
+    `;
+  }
+
+  container.innerHTML = `
+    <div class="exam-paper">
+      <div class="exam-header">
+        <div class="exam-header-top">
+          <div class="exam-code">📕 錯題溫習重測卷（只抽出曾做錯的題目）</div>
+        </div>
+      </div>
+
+      <div class="group-tabs">
+        ${tabsHtml}
+      </div>
+
+      <div class="word-bank-wrapper">
+        <div class="section-label">
+          <span>供詞框（每個選項只能用一次）</span>
+        </div>
+        <div class="word-bank-box">
+          ${bankHtml}
+        </div>
+      </div>
+
+      <div class="questions-list">
+        ${questionsHtml}
+      </div>
+
+      ${footerHtml}
+    </div>
+  `;
+}
+
+function switchMistakeGroup(idx) {
+  currentGroupIdx = idx;
+  selectedWord = null;
+  activeBlankIndex = 0;
+  render();
+}
+
+function handleMistakeWordClick(word) {
+  const grp = mistakeQuizSession[currentGroupIdx];
+  if (grp.submitted) return;
+
+  if (activeBlankIndex !== null) {
+    Object.keys(grp.userAnswers).forEach(k => {
+      if (grp.userAnswers[k] === word) delete grp.userAnswers[k];
+    });
+    grp.userAnswers[activeBlankIndex] = word;
+    selectedWord = null;
+
+    let nextBlank = null;
+    const len = grp.questions.length;
+    for (let i = 0; i < len; i++) {
+      const checkIdx = (activeBlankIndex + 1 + i) % len;
+      if (!grp.userAnswers[checkIdx]) {
+        nextBlank = checkIdx;
+        break;
+      }
+    }
+    activeBlankIndex = nextBlank;
+    render();
+  } else {
+    selectedWord = (selectedWord === word) ? null : word;
+    render();
+  }
+}
+
+function handleMistakeBlankClick(qIdx) {
+  const grp = mistakeQuizSession[currentGroupIdx];
+  if (grp.submitted) return;
+
+  if (selectedWord) {
+    Object.keys(grp.userAnswers).forEach(k => {
+      if (grp.userAnswers[k] === selectedWord) delete grp.userAnswers[k];
+    });
+    grp.userAnswers[qIdx] = selectedWord;
+    selectedWord = null;
+    activeBlankIndex = null;
+  } else if (grp.userAnswers[qIdx]) {
+    delete grp.userAnswers[qIdx];
+    activeBlankIndex = qIdx;
+  } else {
+    activeBlankIndex = qIdx;
+  }
+  render();
+}
+
+function submitMistakeGroup() {
+  const grp = mistakeQuizSession[currentGroupIdx];
+  grp.submitted = true;
+  selectedWord = null;
+  activeBlankIndex = null;
+  render();
+}
+
+function removeCorrectFromMistakeBook() {
+  const grp = mistakeQuizSession[currentGroupIdx];
+  const correctIds = new Set();
+  grp.questions.forEach((q, qi) => {
+    if (grp.userAnswers[qi] === q.word) correctIds.add(q.id);
+  });
+
+  const remaining = loadMistakes().filter(m => !correctIds.has(m.id));
+  saveMistakes(remaining);
+  openMistakeCenter();
+}
+
+// 初始化啟動
+render();
+</script>
+</body>
+</html>
